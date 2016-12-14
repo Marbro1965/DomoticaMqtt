@@ -1,0 +1,102 @@
+<html>
+<head>
+<title>Broker Edit</title>
+<link href="css/sfa0001.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="js/sfa0001.js"></script>
+</head>
+<body id="content" onload="(SelectBrokerProt(__SL_P_U13,__SL_P_U14))">
+<h1>Broker Editor</h1>
+<form name="impostazioni broker" action="broker_view.html"  method="POST" > 
+<h2>Broker 1</h2>
+				<table>
+					<tr>
+						<td>
+							Address: 
+						</td>
+						<td>
+							<input type="text" name="__SL_P_U05" value="__SL_G_U05">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							UserID: 
+						</td>
+						<td>
+						    <input type="text" name="__SL_P_U07" value="__SL_G_U07">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Password: </td>
+						<td>
+							<input type="password" name="__SL_P_U08" value="__SL_G_U08">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Port:
+						</td>
+						<td>
+							<input type="text" name="__SL_P_U11" value="__SL_G_U11">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Protection 1:
+						</td>
+						<td>
+							<!--<input type="text" name="__SL_P_U13" value="__SL_G_U13">-->
+							<div id="SelectProt1"></div>
+						</td>
+					</tr>
+				</table>
+				<h2>Broker 2</h2>
+				<table>
+					<tr>
+						<td>
+							Address: 
+						</td>
+						<td>
+							<input type="text" name="__SL_P_U05" value="__SL_G_U05">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							UserID: 
+						</td>
+						<td>
+						    <input type="text" name="__SL_P_U07" value="__SL_G_U07">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Password: </td>
+						<td>
+							<input type="password" name="__SL_P_U08" value="__SL_G_U08">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Port: </td>
+						<td>
+							<input type="text" name="__SL_P_U12" value="__SL_G_U12">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Protection 2:
+						</td>
+						<td>
+							<!--<input type="text" name="__SL_P_U14" value="__SL_G_U14">-->
+							<div id="SelectProt2"></div>
+						</td>
+					</tr>
+				</table>
+			<input type="submit" value="Apply">
+		</form>
+
+<p>
+<a href="content.html" target="content">Back to original page</a>
+</p>
+</body>
+</html>

@@ -1,0 +1,25 @@
+body {
+    font-family:verdana, arial, sans-serif;
+    font-size:10pt;
+}
+a {
+    color:white;
+}
+/*colori e margini*/
+#top_nav {
+    margin:10px;
+    background-color:#0066FF;
+}
+#menu_1 {
+    margin:10px;
+    background-color:#99CCFF ;
+}
+#content {
+    margin:30px;
+    background-color:#CCFFFF #CCFFFF;
+}
+#footer {
+    margin:10px;
+    background-color:#666699;
+    color:white;
+}

@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>SSID editor</title>
+<link href="css/sfa0001.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="js/sfa0001.js"></script>
+</head>
+<body id="content" onload="(SelectSSIDProt(__SL_G_U02))">
+<h1>SSID</h1>
+<form name="impostazioni wi-fi" action="ssid_view.html"  method="POST" > 
+				<table>
+					<tr>
+						<td>
+							SSID: 
+						</td>
+						<td>
+							<input type="text" name="__SL_P_U01" value="__SL_G_U01">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Protezione: 
+						</td>
+						<td>
+						    <div id="SelectProt"></div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Password: </td>
+						<td>
+							<input type="password" name="__SL_P_U03" value="__SL_G_U03">
+						</td>
+					</tr>
+				</table>
+			<input type="submit" value="Apply">
+		</form>
+
+<p>
+<a href="content.html" target="content">Back to original page</a>
+</p>
+</body>
+</html>
