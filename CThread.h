@@ -2,7 +2,7 @@
  * CThread.h
  *
  *  Created on: 17/mar/2016
- *      Author: marrelli
+ *      Author: Marrelli
  */
 
 #ifndef DOMOTICAMQTT_CTHREAD_H_

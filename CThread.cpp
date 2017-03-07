@@ -2,15 +2,18 @@
  * CThread.cpp
  *
  *  Created on: 17/mar/2016
- *      Author: marrelli
+ *      Author: Marrelli
  */
 
 #include "CThread.h"
 
-
 OsiMsgQ_t CThread::g_PBQueue = 0;
 
 OsiMsgQ_t CThread::g_FileWriteQueue = 0;
+
+OsiMsgQ_t CThread::g_FileReadQueue = 0;
+
+OsiMsgQ_t CThread::g_I2CQueue = 0;
 
 configuration CThread::config;
 

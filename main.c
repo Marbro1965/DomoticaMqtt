@@ -53,6 +53,7 @@
 
 // common interface includes
 #include "network_if.h"
+#include "i2c_if.h"
 //#ifndef NOTERM
 #include "uart_if.h"
 //#endif
@@ -69,7 +70,8 @@
 
 // application specific includes
 #include "pinmux.h"
-
+#include "tmp006drv.h"
+#include "bma222drv.h"
 #include "spawner.h"
 
 #define UART_PRINT              Report
@@ -373,15 +375,18 @@ role_as_accessPoint:
     	//if AP disconnect
     	if (ROLE_AP!=uMode)
     	{
-    	if (0==GET_STATUS_BIT(g_ulStatus, STATUS_BIT_CONNECTION))
+			if (IS_CONNECTED(g_ulStatus))
+				;
+			else
+			{
+				terminateThreads();
+				osi_Sleep(5000);
+				goto init;
 
-    		{
-    		terminateThreads();
-    		osi_Sleep(5000);
-    		goto init;
 
-    		}
-    	}
+			}
+
+		}
     	osi_Sleep(5000);
     }
 
@@ -421,6 +426,35 @@ void main()
 
     //UART Initialization
     InitTerm();
+
+
+
+    //
+    // I2C Init
+    //
+    lRetVal = I2C_IF_Open(I2C_MASTER_MODE_FST);
+    if(lRetVal < 0)
+    {
+        ERR_PRINT(lRetVal);
+        LOOP_FOREVER();
+    }
+
+    //Init Temprature Sensor
+    lRetVal = TMP006DrvOpen();
+    if(lRetVal < 0)
+    {
+        ERR_PRINT(lRetVal);
+        LOOP_FOREVER();
+    }
+
+    //Init Accelerometer Sensor
+    lRetVal = BMA222Open();
+    if(lRetVal < 0)
+    {
+        ERR_PRINT(lRetVal);
+        LOOP_FOREVER();
+    }
+
 
     //
     // Start the SimpleLink Host

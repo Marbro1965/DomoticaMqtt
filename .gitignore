@@ -1,0 +1,6 @@
+#folders
+TI_RTOS/
+FreeRTOS/
+
+#files
+*.obj

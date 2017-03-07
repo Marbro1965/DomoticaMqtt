@@ -396,7 +396,7 @@
       <Type>blob</Type>
       <Storage>SFLASH</Storage>
       <MaxSize>0</MaxSize>
-      <url>${sessionDir}/../../MQTTConfig/HomeConfig/domotica.ini</url>
+      <url>${sessionDir}/../../MQTTConfig/WorkConfig/domotica.ini</url>
       <mode>
          <ModeEntry name="Rollback" checked="false"/>
          <ModeEntry name="Secured" checked="false"/>

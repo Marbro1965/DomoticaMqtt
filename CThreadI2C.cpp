@@ -48,28 +48,28 @@ void CThreadI2C::Run()
     //
     // I2C Init
     //
-    lRetVal = I2C_IF_Open(I2C_MASTER_MODE_FST);
-    if(lRetVal < 0)
-    {
-        //ERR_PRINT(lRetVal);
-        //LOOP_FOREVER();
-    }
-
-    //Init Temprature Sensor
-    lRetVal = TMP006DrvOpen();
-    if(lRetVal < 0)
-    {
-        //ERR_PRINT(lRetVal);
-        //LOOP_FOREVER();
-    }
-
-    //Init Accelerometer Sensor
-    lRetVal = BMA222Open();
-    if(lRetVal < 0)
-    {
-        //ERR_PRINT(lRetVal);
-        //LOOP_FOREVER();
-    }
+//    lRetVal = I2C_IF_Open(I2C_MASTER_MODE_FST);
+//    if(lRetVal < 0)
+//    {
+//        //ERR_PRINT(lRetVal);
+//        //LOOP_FOREVER();
+//    }
+//
+//    //Init Temperature Sensor
+//    lRetVal = TMP006DrvOpen();
+//    if(lRetVal < 0)
+//    {
+//        //ERR_PRINT(lRetVal);
+//        //LOOP_FOREVER();
+//    }
+//
+//    //Init Accelerometer Sensor
+//    lRetVal = BMA222Open();
+//    if(lRetVal < 0)
+//    {
+//        //ERR_PRINT(lRetVal);
+//        //LOOP_FOREVER();
+//    }
 
 
     for (;;)

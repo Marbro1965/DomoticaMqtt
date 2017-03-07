@@ -133,8 +133,9 @@ void CThreadMqttClient::InitUserConnectConfig()
 
 	usr_connect_config[0].clt_ctx = NULL;
 	usr_connect_config[0].client_id = (unsigned char*)"user1";
-	usr_connect_config[0].usr_name = (unsigned char*)GetBrokerUserId(0);
-	usr_connect_config[0].usr_pwd = (unsigned char*)GetBrokerPassword(0);
+
+	usr_connect_config[0].usr_name = NULL;//(unsigned char*)GetBrokerUserId(0);
+	usr_connect_config[0].usr_pwd = NULL;//(unsigned char*)GetBrokerPassword(0);
 	usr_connect_config[0].is_clean = true;
 	usr_connect_config[0].keep_alive_time = KEEP_ALIVE_TIMER;
 
@@ -235,9 +236,9 @@ void CThreadMqttClient::InitUserConnectConfig()
 	pub_topic_sw4 = new char[i];
 	sprintf((char*)pub_topic_sw4,"%s",data);
 
-	i = sprintf(data,"%s%s",GetBrokerPublishEntry(),PUB_TOPIC_FOR_MOVEMENT);
-	pub_topic_sw5 = new char[i];
-	sprintf((char*)pub_topic_sw5,"%s",data);
+	//i = sprintf(data,"%s%s",GetBrokerPublishEntry(),PUB_TOPIC_FOR_MOVEMENT);
+	//pub_topic_sw5 = new char[i];
+	//sprintf((char*)pub_topic_sw5,"%s",data);
 
 }
 
