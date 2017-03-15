@@ -73,7 +73,7 @@ extern "C"
 //
 //*****************************************************************************
 int TMP006DrvOpen();
-int TMP006DrvGetTemp(float *pfCurrTemp);
+int TMP006DrvGetTemp(float *pfCurrTemp,float *pfAmbTemp);
 
 //*****************************************************************************
 //

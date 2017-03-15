@@ -27,8 +27,8 @@
 #define WILL_RETAIN             false
 
 /*Defining Broker IP address and port Number*/
-#define SERVER_ADDRESS          "messagesight.demos.ibm.com"
-#define PORT_NUMBER             1883
+//#define SERVER_ADDRESS          "messagesight.demos.ibm.com"
+//#define PORT_NUMBER             1883
 
 #define MAX_BROKER_CONN         2
 
@@ -134,8 +134,8 @@ void CThreadMqttClient::InitUserConnectConfig()
 	usr_connect_config[0].clt_ctx = NULL;
 	usr_connect_config[0].client_id = (unsigned char*)"user1";
 
-	usr_connect_config[0].usr_name = NULL;//(unsigned char*)GetBrokerUserId(0);
-	usr_connect_config[0].usr_pwd = NULL;//(unsigned char*)GetBrokerPassword(0);
+	usr_connect_config[0].usr_name = (unsigned char*)GetBrokerUserId(0);
+	usr_connect_config[0].usr_pwd = (unsigned char*)GetBrokerPassword(0);
 	usr_connect_config[0].is_clean = true;
 	usr_connect_config[0].keep_alive_time = KEEP_ALIVE_TIMER;
 
@@ -247,7 +247,7 @@ CThreadMqttClient::CThreadMqttClient() {
 
 	app_hndl = (void*)usr_connect_config;
 
-
+	bToggle = false;
 }
 
 CThreadMqttClient::~CThreadMqttClient() {
@@ -262,7 +262,9 @@ void CThreadMqttClient::Run(){
     int iNumBroker = 0;
     int iConnBroker = 0;
 
-    char data[10];
+    char data[64];
+
+    data_sw4 = new unsigned char[64];
 
 	osi_messages RecvQue;
 
@@ -337,9 +339,44 @@ void CThreadMqttClient::Run(){
 		//
 		// connecting to the broker
 		//
-	    if((sl_ExtLib_MqttClientConnect((void*)local_con_conf[iCount].clt_ctx,
-	                            local_con_conf[iCount].is_clean,
-	                            local_con_conf[iCount].keep_alive_time) & 0xFF) != 0)
+
+	    osi_Sleep(1000);
+
+	    int iReconnect = 0;
+
+	    unsigned long ret;
+
+	    ret = sl_ExtLib_MqttClientConnect((void*)local_con_conf[iCount].clt_ctx,
+                local_con_conf[iCount].is_clean,
+                local_con_conf[iCount].keep_alive_time) & 0xFF;
+
+	    while(ret!=0)
+	    		{
+
+	    		//UART_PRINT("\n\rBroker connect fail for conn no. %d \n\r",iCount+1);
+
+	    		UART_PRINT("\n\rReconnect. %d \n\r",iReconnect+1);
+
+	    		osi_Sleep(1000);
+
+	    		iReconnect++;
+
+	    		if (iReconnect>3)
+	    			break;
+
+	    	    ret = sl_ExtLib_MqttClientConnect((void*)local_con_conf[iCount].clt_ctx,
+	                    local_con_conf[iCount].is_clean,
+	                    local_con_conf[iCount].keep_alive_time) & 0xFF;
+
+
+	    		}
+
+
+
+//	    if((sl_ExtLib_MqttClientConnect((void*)local_con_conf[iCount].clt_ctx,
+//	                            local_con_conf[iCount].is_clean,
+//	                            local_con_conf[iCount].keep_alive_time) & 0xFF) != 0)
+	    if (ret!=0)
 	        {
 	        UART_PRINT("\n\rBroker connect fail for conn no. %d \n\r",iCount+1);
 	        //delete the context for this connection
@@ -393,6 +430,8 @@ void CThreadMqttClient::Run(){
 	    }
 
 	iCount = 0;
+	//when everything ok start thread temperature
+	initI2CThread();
 	//
 	for(;;)
 	    {
@@ -427,15 +466,24 @@ void CThreadMqttClient::Run(){
 				}
 			else if (TEMPERATURE_READ == RecvQue)
 				{
-				int i = sprintf(data,"%.1f",fCurrentTemp);
-				data_sw4 = new unsigned char[i];
+				if (bToggle)
+				{
+					GPIO_IF_LedOn(MCU_RED_LED_GPIO);
+					bToggle=false;
+
+				}
+				else
+				{
+					GPIO_IF_LedOff(MCU_RED_LED_GPIO);
+					bToggle = true;
+
+				}
+
+				int i = sprintf(data,"%s%.1f%s%.1f","sensore IR: ",fCurrentTemp,"; sensore chip: ",fAmbientTemp);
 				sprintf((char*)data_sw4,"%s",data);
 
 				sl_ExtLib_MqttClientSend((void*)local_con_conf[iCount].clt_ctx,
 						   pub_topic_sw4,data_sw4,strlen((char*)data_sw4),QOS2,RETAIN);
-
-				//free memory
-				delete data_sw4;
 
 				}
 			else if(BROKER_DISCONNECTION == RecvQue)

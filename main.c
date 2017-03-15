@@ -282,9 +282,9 @@ init:
     //
     // Configure LED
     //
-    GPIO_IF_LedConfigure(LED1); //GPIO_IF_LedConfigure(LED1|LED2|LED3);
+    GPIO_IF_LedConfigure(LED1|LED2|LED3); //GPIO_IF_LedConfigure(LED1|LED2|LED3);
     GPIO_IF_LedOff(MCU_RED_LED_GPIO);
-    //GPIO_IF_LedOff(MCU_GREEN_LED_GPIO);
+    GPIO_IF_LedOff(MCU_GREEN_LED_GPIO);
 
     //
     // Reset The state of the machine
@@ -349,7 +349,6 @@ role_as_accessPoint:
         //SPAWNING IO Thread.... Create the message queue
         initIOThread();
 
-
         //SPAWNING UDP Thread
         initUdpThread();
 
@@ -360,6 +359,10 @@ role_as_accessPoint:
         //SPAWNING MQTT Client
 
     	initMqttClient();
+
+
+    	//
+
 
     }
     else

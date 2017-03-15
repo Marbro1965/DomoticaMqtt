@@ -73,7 +73,9 @@ protected:
 
 	unsigned char g_ucDryerRunning;
 
-	float fCurrentTemp;
+	static float fCurrentTemp;
+
+	static float fAmbientTemp;
 
 	static configuration config;
 

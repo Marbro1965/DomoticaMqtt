@@ -15,6 +15,8 @@
 
 #include "i2c_if.h"
 
+#include "gpio_if.h"
+
 CThreadI2C::CThreadI2C() {
 	// TODO Auto-generated constructor stub
 
@@ -75,13 +77,19 @@ void CThreadI2C::Run()
     for (;;)
     {
 
-        TMP006DrvGetTemp(&fCurrentTemp);
+    	//GPIO_IF_LedOn(MCU_RED_LED_GPIO);
 
-    	osi_Sleep(100);
+    	osi_Sleep(1000);
 
-        ReadAccSensor();
+    	//GPIO_IF_LedOff(MCU_RED_LED_GPIO);
 
-    	osi_Sleep(100);
+        TMP006DrvGetTemp(&fCurrentTemp,&fAmbientTemp);
+
+
+
+        //ReadAccSensor();
+
+    	//osi_Sleep(100);
 
         osi_messages var = TEMPERATURE_READ;
         //
@@ -89,7 +97,7 @@ void CThreadI2C::Run()
         //
         osi_MsgQWrite(&CThread::g_PBQueue,&var,OSI_NO_WAIT);
 
-    	osi_Sleep(1000);
+    	osi_Sleep(5000);
 		
     }
 

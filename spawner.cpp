@@ -17,6 +17,8 @@
 
 #include "CThreadIO.h"
 
+#include "CThreadI2C.h"
+
 #include "CThreadMqttClient.h"
 
 #include "CThreadDefinitions.h"
@@ -42,6 +44,8 @@ void initThreadsPointer(){
 	mqttThread = 0;
 
 	httpServerThread = 0;
+
+	ioThread = 0;
 }
 
 void initUdpThread(){
@@ -85,6 +89,18 @@ void initIOThread(){
 
 	osi_TaskCreate(&CThreadIO::Create,(const signed char *)"IO thread",OSI_STACK_SIZE, ioThread, 2,NULL);
 
+}
+
+void initI2CThread(){
+
+	if (0==i2cThread)
+	{
+
+		i2cThread = new CThreadI2C();
+
+	}
+
+	osi_TaskCreate(&CThreadI2C::Create,(const signed char *)"I2C thread",OSI_STACK_SIZE, i2cThread, 2,NULL);
 }
 
 void initMqttClient(){

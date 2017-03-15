@@ -62,6 +62,8 @@ protected:
 
 	void *app_hndl;
 
+	bool bToggle;
+
 public:
 
 	CThreadMqttClient();

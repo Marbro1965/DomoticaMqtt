@@ -199,7 +199,7 @@ double ComputeTemperature(double dVobject, double dTAmbient)
 //
 //****************************************************************************
 int 
-TMP006DrvGetTemp(float *pfCurrTemp)
+TMP006DrvGetTemp(float *pfCurrTemp,float *pfAmbTemp)
 {
     unsigned short usVObjectRaw, usTAmbientRaw;
     double dVObject, dTAmbient;
@@ -214,11 +214,17 @@ TMP006DrvGetTemp(float *pfCurrTemp)
     //
     // Apply the format conversion
     //
+//    short a = (short)usVObjectRaw;
+
+//    double b = (double)a;
+
     dVObject = ((short)usVObjectRaw) * 156.25e-9;
+    //dVObject = b * 156.25e-9;
     dTAmbient = ((short)usTAmbientRaw) / 128;
 
     *pfCurrTemp = ComputeTemperature(dVObject, dTAmbient);
-    
+
+    *pfAmbTemp = dTAmbient;
     //
     // Convert to Farenheit
     //

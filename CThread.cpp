@@ -17,6 +17,12 @@ OsiMsgQ_t CThread::g_I2CQueue = 0;
 
 configuration CThread::config;
 
+
+float CThread::fCurrentTemp;
+
+float CThread::fAmbientTemp;
+
+
 CThread::CThread() {
 	// TODO Auto-generated constructor stub
 
