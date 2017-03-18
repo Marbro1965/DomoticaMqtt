@@ -9,6 +9,7 @@ CPP_SRCS += \
 ../CThreadHTTPServer.cpp \
 ../CThreadI2C.cpp \
 ../CThreadIO.cpp \
+../CThreadMain.cpp \
 ../CThreadMqttClient.cpp \
 ../CThreadTCPClient.cpp \
 ../CThreadTCPServer.cpp \
@@ -39,6 +40,7 @@ OBJS += \
 ./CThreadHTTPServer.obj \
 ./CThreadI2C.obj \
 ./CThreadIO.obj \
+./CThreadMain.obj \
 ./CThreadMqttClient.obj \
 ./CThreadTCPClient.obj \
 ./CThreadTCPServer.obj \
@@ -64,6 +66,7 @@ CPP_DEPS += \
 ./CThreadHTTPServer.d \
 ./CThreadI2C.d \
 ./CThreadIO.d \
+./CThreadMain.d \
 ./CThreadMqttClient.d \
 ./CThreadTCPClient.d \
 ./CThreadTCPServer.d \
@@ -91,6 +94,7 @@ CPP_DEPS__QUOTED += \
 "CThreadHTTPServer.d" \
 "CThreadI2C.d" \
 "CThreadIO.d" \
+"CThreadMain.d" \
 "CThreadMqttClient.d" \
 "CThreadTCPClient.d" \
 "CThreadTCPServer.d" \
@@ -118,6 +122,7 @@ OBJS__QUOTED += \
 "CThreadHTTPServer.obj" \
 "CThreadI2C.obj" \
 "CThreadIO.obj" \
+"CThreadMain.obj" \
 "CThreadMqttClient.obj" \
 "CThreadTCPClient.obj" \
 "CThreadTCPServer.obj" \
@@ -143,6 +148,7 @@ CPP_SRCS__QUOTED += \
 "../CThreadHTTPServer.cpp" \
 "../CThreadI2C.cpp" \
 "../CThreadIO.cpp" \
+"../CThreadMain.cpp" \
 "../CThreadMqttClient.cpp" \
 "../CThreadTCPClient.cpp" \
 "../CThreadTCPServer.cpp" \

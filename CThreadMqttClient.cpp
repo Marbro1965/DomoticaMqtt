@@ -466,34 +466,38 @@ void CThreadMqttClient::Run(){
 				}
 			else if (TEMPERATURE_READ == RecvQue)
 				{
-				if (bToggle)
-				{
-					GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-					bToggle=false;
-
-				}
-				else
-				{
-					GPIO_IF_LedOff(MCU_RED_LED_GPIO);
-					bToggle = true;
-
-				}
+//				if (bToggle)
+//				{
+//					GPIO_IF_LedOn(MCU_RED_LED_GPIO);
+//					bToggle=false;
+//
+//				}
+//				else
+//				{
+//					GPIO_IF_LedOff(MCU_RED_LED_GPIO);
+//					bToggle = true;
+//
+//				}
 
 				int i = sprintf(data,"%s%.1f%s%.1f","sensore IR: ",fCurrentTemp,"; sensore chip: ",fAmbientTemp);
 				sprintf((char*)data_sw4,"%s",data);
 
 				sl_ExtLib_MqttClientSend((void*)local_con_conf[iCount].clt_ctx,
 						   pub_topic_sw4,data_sw4,strlen((char*)data_sw4),QOS2,RETAIN);
-
+				UART_PRINT("Data: %s\n\r",data_sw4);
 				}
 			else if(BROKER_DISCONNECTION == RecvQue)
 				{
+
+				UART_PRINT("Data: %s\n\r",data_sw4);
+
 					iConnBroker--;
 					if(iConnBroker < 1)
 					{
 					//
 					// device not connected to any broker
 					//
+					GPIO_IF_LedOn(MCU_RED_LED_GPIO);
 					goto end;
 					}
 				}

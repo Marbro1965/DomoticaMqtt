@@ -15,6 +15,7 @@ ORDERED_OBJS += \
 "./CThreadHTTPServer.obj" \
 "./CThreadI2C.obj" \
 "./CThreadIO.obj" \
+"./CThreadMain.obj" \
 "./CThreadMqttClient.obj" \
 "./CThreadTCPClient.obj" \
 "./CThreadTCPServer.obj" \
@@ -180,9 +181,9 @@ DomoticaMqtt.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "CThread.d" "CThreadDefinitions.d" "CThreadHTTPServer.d" "CThreadI2C.d" "CThreadIO.d" "CThreadMqttClient.d" "CThreadTCPClient.d" "CThreadTCPServer.d" "CThreadUDP.d" "spawner.d" 
+	-$(RM) "CThread.d" "CThreadDefinitions.d" "CThreadHTTPServer.d" "CThreadI2C.d" "CThreadIO.d" "CThreadMain.d" "CThreadMqttClient.d" "CThreadTCPClient.d" "CThreadTCPServer.d" "CThreadUDP.d" "spawner.d" 
 	-$(RM) "bma222drv.d" "button_if.d" "gpio_if.d" "i2c_if.d" "ini.d" "main.d" "network_common.d" "network_if.d" "pinmux.d" "startup_ccs.d" "timer_if.d" "tmp006drv.d" "uart_if.d" 
-	-$(RM) "CThread.obj" "CThreadDefinitions.obj" "CThreadHTTPServer.obj" "CThreadI2C.obj" "CThreadIO.obj" "CThreadMqttClient.obj" "CThreadTCPClient.obj" "CThreadTCPServer.obj" "CThreadUDP.obj" "bma222drv.obj" "button_if.obj" "gpio_if.obj" "i2c_if.obj" "ini.obj" "main.obj" "network_common.obj" "network_if.obj" "pinmux.obj" "spawner.obj" "startup_ccs.obj" "timer_if.obj" "tmp006drv.obj" "uart_if.obj" 
+	-$(RM) "CThread.obj" "CThreadDefinitions.obj" "CThreadHTTPServer.obj" "CThreadI2C.obj" "CThreadIO.obj" "CThreadMain.obj" "CThreadMqttClient.obj" "CThreadTCPClient.obj" "CThreadTCPServer.obj" "CThreadUDP.obj" "bma222drv.obj" "button_if.obj" "gpio_if.obj" "i2c_if.obj" "ini.obj" "main.obj" "network_common.obj" "network_if.obj" "pinmux.obj" "spawner.obj" "startup_ccs.obj" "timer_if.obj" "tmp006drv.obj" "uart_if.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

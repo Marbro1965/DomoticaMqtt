@@ -55,7 +55,6 @@ protected:
 
 	static unsigned char *data_sw5;
 
-
 	static connect_config usr_connect_config[2];
 
 	static SlMqttClientLibCfg_t Mqtt_Client;
