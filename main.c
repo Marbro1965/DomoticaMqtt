@@ -74,6 +74,10 @@
 #include "bma222drv.h"
 #include "spawner.h"
 
+//Main Thread
+
+#include "CThreadMain.h"
+
 #define UART_PRINT              Report
 
 #define OSI_STACK_SIZE			2048
@@ -471,9 +475,11 @@ void main()
     //
     //Starts the threads
     //
-    lRetVal = osi_TaskCreate(SpawnThread,
-                            (const signed char *)"Mqtt Client App",
-                            OSI_STACK_SIZE, NULL, 2, NULL );
+    //lRetVal = osi_TaskCreate(SpawnThread,
+    //                        (const signed char *)"Mqtt Client App",
+    //                        OSI_STACK_SIZE, NULL, 2, NULL );
+
+    //lRetVal = osi_TaskCreate(&CThreadMain::Create,(const signed char *)"MainThread Supervisor",OSI_STACK_SIZE, new CThreadMain(), 2,NULL);
 
     if(lRetVal < 0)
     {

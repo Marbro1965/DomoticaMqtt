@@ -14,54 +14,12 @@
 
 #include "gpio_if.h"
 
-/*Defining Number of topics*/
-#define TOPIC_COUNT             3
 
 
-typedef struct connection_config{
-	SlMqttClientCtxCfg_t broker_config;
-	void *clt_ctx;
-	unsigned char *client_id;
-	unsigned char *usr_name;
-	unsigned char *usr_pwd;
-	bool is_clean;
-	unsigned int keep_alive_time;
-	SlMqttClientCbs_t CallBAcks;
-	int num_topics;
-	char *topic[TOPIC_COUNT];
-	unsigned char qos[TOPIC_COUNT];
-	SlMqttWill_t will_params;
-	bool is_connected;
-}connect_config;
 
 class CThreadMqttClient:public CThread {
 
 
-protected:
-
-	static const char *pub_topic_sw2;
-
-	static const char *pub_topic_sw3;
-
-	static const char *pub_topic_sw4;
-
-	static const char *pub_topic_sw5;
-
-	static unsigned char *data_sw2;
-
-	static unsigned char *data_sw3;
-
-	static unsigned char *data_sw4;
-
-	static unsigned char *data_sw5;
-
-	static connect_config usr_connect_config[2];
-
-	static SlMqttClientLibCfg_t Mqtt_Client;
-
-	void *app_hndl;
-
-	bool bToggle;
 
 public:
 
@@ -75,6 +33,7 @@ public:
 
 	void MqttClient(void *pvParameters);
 
+	void HandleMessages(void);
 	/*
 	 *
 	 *

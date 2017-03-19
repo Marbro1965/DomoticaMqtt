@@ -11,6 +11,7 @@
 #include "CThread.h"
 
 class CThreadMain: public CThread {
+
 public:
 	CThreadMain();
 	virtual ~CThreadMain();

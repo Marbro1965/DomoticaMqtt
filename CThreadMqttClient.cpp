@@ -17,6 +17,7 @@
 
 #include "spawner.h"
 
+
 /*Operate Lib in MQTT 3.1 mode.*/
 #define MQTT_3_1_1              false /*MQTT 3.1.1 */
 #define MQTT_3_1                true /*MQTT 3.1*/
@@ -26,18 +27,12 @@
 #define WILL_QOS                QOS2
 #define WILL_RETAIN             false
 
-/*Defining Broker IP address and port Number*/
-//#define SERVER_ADDRESS          "messagesight.demos.ibm.com"
-//#define PORT_NUMBER             1883
-
 #define MAX_BROKER_CONN         2
 
 #define SERVER_MODE             MQTT_3_1
 /*Specifying Receive time out for the Receive task*/
 #define RCV_TIMEOUT             30
 
-/*Background receive task priority*/
-#define TASK_PRIORITY           3
 
 /* Keep Alive Timer value*/
 #define KEEP_ALIVE_TIMER        25
@@ -48,6 +43,11 @@
 /*Retain Flag. Used in publish message. */
 #define RETAIN                  1
 
+/*Defining QOS levels*/
+#define QOS0                    0
+#define QOS1                    1
+#define QOS2                    2
+
 /*Defining Publish Topic*/
 
 #define PUB_TOPIC_FOR_SW3X       		"ButtonPressEvtSw3"
@@ -56,52 +56,11 @@
 #define PUB_TOPIC_FOR_MOVEMENT     		"Movement"
 
 
-
-
 /*Defining Subscription Topic Values*/
 
 #define SUB_TOPIC1X                  "ToggleLEDCmdL1"
 #define SUB_TOPIC2X                  "ToggleLEDCmdL2"
 #define SUB_TOPIC3X                  "ToggleLEDCmdL3"
-
-
-/*Defining QOS levels*/
-#define QOS0                    0
-#define QOS1                    1
-#define QOS2                    2
-
-#define UART_PRINT              Report
-
-
-/*Publishing topics and messages*/
-const char *CThreadMqttClient::pub_topic_sw2 = NULL;
-
-const char *CThreadMqttClient::pub_topic_sw3 = NULL;
-
-const char *CThreadMqttClient::pub_topic_sw4 = NULL;
-
-const char *CThreadMqttClient::pub_topic_sw5 = NULL;
-
-unsigned char *CThreadMqttClient::data_sw2=(unsigned char*)"Push button sw2 is pressed on CC32XX device";
-
-unsigned char *CThreadMqttClient::data_sw3=(unsigned char*)"Push button sw3 is pressed on CC32XX device";
-
-unsigned char *CThreadMqttClient::data_sw4= NULL;
-
-unsigned char *CThreadMqttClient::data_sw5= NULL;
-
-
-connect_config CThreadMqttClient::usr_connect_config[2];
-
-/* library configuration */
-SlMqttClientLibCfg_t CThreadMqttClient::Mqtt_Client={
-    1882,
-    TASK_PRIORITY,
-    30,
-    true,
-    (long(*)(const char *, ...))UART_PRINT
-};
-
 
 void CThreadMqttClient::InitUserConnectConfig()
 {
@@ -261,12 +220,6 @@ void CThreadMqttClient::Run(){
     int iCount = 0;
     int iNumBroker = 0;
     int iConnBroker = 0;
-
-    char data[64];
-
-    data_sw4 = new unsigned char[64];
-
-	osi_messages RecvQue;
 
 	connect_config *local_con_conf = (connect_config *)app_hndl;
 
@@ -432,81 +385,15 @@ void CThreadMqttClient::Run(){
 	iCount = 0;
 	//when everything ok start thread temperature
 	initI2CThread();
+
+	HandleMessages();
 	//
-	for(;;)
-	    {
-	    osi_MsgQRead( &g_PBQueue, &RecvQue, OSI_WAIT_FOREVER);
-
-	    for (iCount = 0; iCount<iNumBroker; iCount++)
-	    	{
-
-			if(PUSH_BUTTON_SW2_PRESSED == RecvQue)
-			   {
-			   Button_IF_EnableInterrupt(SW2);
-			   //
-			   // send publish message
-			   //
-			   sl_ExtLib_MqttClientSend((void*)local_con_conf[iCount].clt_ctx,
-						   pub_topic_sw2,data_sw2,strlen((char*)data_sw2),QOS2,RETAIN);
-					UART_PRINT("\n\r CC3200 Publishes the following message \n\r");
-					UART_PRINT("Topic: %s\n\r",pub_topic_sw2);
-					UART_PRINT("Data: %s\n\r",data_sw2);
-				}
-			else if(PUSH_BUTTON_SW3_PRESSED == RecvQue)
-				{
-				Button_IF_EnableInterrupt(SW3);
-				//
-				// send publish message
-				//
-				sl_ExtLib_MqttClientSend((void*)local_con_conf[iCount].clt_ctx,
-						   pub_topic_sw3,data_sw3,strlen((char*)data_sw3),QOS2,RETAIN);
-					UART_PRINT("\n\r CC3200 Publishes the following message \n\r");
-					UART_PRINT("Topic: %s\n\r",pub_topic_sw3);
-					UART_PRINT("Data: %s\n\r",data_sw3);
-				}
-			else if (TEMPERATURE_READ == RecvQue)
-				{
-//				if (bToggle)
-//				{
-//					GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-//					bToggle=false;
-//
-//				}
-//				else
-//				{
-//					GPIO_IF_LedOff(MCU_RED_LED_GPIO);
-//					bToggle = true;
-//
-//				}
-
-				int i = sprintf(data,"%s%.1f%s%.1f","sensore IR: ",fCurrentTemp,"; sensore chip: ",fAmbientTemp);
-				sprintf((char*)data_sw4,"%s",data);
-
-				sl_ExtLib_MqttClientSend((void*)local_con_conf[iCount].clt_ctx,
-						   pub_topic_sw4,data_sw4,strlen((char*)data_sw4),QOS2,RETAIN);
-				UART_PRINT("Data: %s\n\r",data_sw4);
-				}
-			else if(BROKER_DISCONNECTION == RecvQue)
-				{
-
-				UART_PRINT("Data: %s\n\r",data_sw4);
-
-					iConnBroker--;
-					if(iConnBroker < 1)
-					{
-					//
-					// device not connected to any broker
-					//
-					GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-					goto end;
-					}
-				}
-	    	}
-	    }
-end:
 	//
 	// Deinitializating the client library
 	//
+
+
+end:
 	sl_ExtLib_MqttClientExit();
 	UART_PRINT("\n\r Exiting the Application\n\r");
 
@@ -724,8 +611,6 @@ void CThreadMqttClient::Terminate()
 
 	connect_config *local_con_conf = (connect_config *)app_hndl;
 
-	//int iNumBroker = sizeof(usr_connect_config)/sizeof(connect_config);
-
 	int iNumBroker = CThread::config.brokerNumber;
 
 	int iCount = 0;
@@ -742,5 +627,94 @@ void CThreadMqttClient::Terminate()
 		sl_MqttDisconnect(&local_con_conf[iCount]);
 
 	    }
+
+}
+void CThreadMqttClient::HandleMessages(void)
+{
+	connect_config *local_con_conf = (connect_config *)app_hndl;
+
+	osi_messages RecvQue;
+
+    char data[64];
+
+    data_sw4 = new unsigned char[64];
+
+    int iNumBroker = CThread::config.brokerNumber;
+
+	for(;;)
+	    {
+	    osi_MsgQRead( &g_PBQueue, &RecvQue, OSI_WAIT_FOREVER);
+
+	    for (int iCount = 0; iCount<iNumBroker; iCount++)
+	    	{
+
+			if(PUSH_BUTTON_SW2_PRESSED == RecvQue)
+			   {
+			   Button_IF_EnableInterrupt(SW2);
+			   //
+			   // send publish message
+			   //
+			   if (local_con_conf[iCount].is_connected)
+			   	   {
+				   sl_ExtLib_MqttClientSend((void*)local_con_conf[iCount].clt_ctx,
+						   pub_topic_sw2,data_sw2,strlen((char*)data_sw2),QOS2,RETAIN);
+					UART_PRINT("\n\r CC3200 Publishes the following message \n\r");
+					UART_PRINT("Topic: %s\n\r",pub_topic_sw2);
+					UART_PRINT("Data: %s\n\r",data_sw2);
+			   	   }
+			   }
+			else if(PUSH_BUTTON_SW3_PRESSED == RecvQue)
+				{
+				Button_IF_EnableInterrupt(SW3);
+				//
+				// send publish message
+				//
+				if (local_con_conf[iCount].is_connected)
+					{
+					sl_ExtLib_MqttClientSend((void*)local_con_conf[iCount].clt_ctx,
+							   pub_topic_sw3,data_sw3,strlen((char*)data_sw3),QOS2,RETAIN);
+						UART_PRINT("\n\r CC3200 Publishes the following message \n\r");
+						UART_PRINT("Topic: %s\n\r",pub_topic_sw3);
+						UART_PRINT("Data: %s\n\r",data_sw3);
+					}
+				}
+			else if (TEMPERATURE_READ == RecvQue)
+				{
+//				if (bToggle)
+//				{
+//					GPIO_IF_LedOn(MCU_RED_LED_GPIO);
+//					bToggle=false;
+//
+//				}
+//				else
+//				{
+//					GPIO_IF_LedOff(MCU_RED_LED_GPIO);
+//					bToggle = true;
+//
+//				}
+				if (local_con_conf[iCount].is_connected)
+					{
+					int i = sprintf(data,"%s%.1f%s%.1f","sensore IR: ",fCurrentTemp,"; sensore chip: ",fAmbientTemp);
+					sprintf((char*)data_sw4,"%s",data);
+
+					sl_ExtLib_MqttClientSend((void*)local_con_conf[iCount].clt_ctx,
+						   pub_topic_sw4,data_sw4,strlen((char*)data_sw4),QOS2,RETAIN);
+					UART_PRINT("Data: %s\n\r",data_sw4);
+					}
+				}
+			else if(BROKER_DISCONNECTION == RecvQue)
+				{
+
+				UART_PRINT("Disconnected: %s\n\r","");
+
+				//deve marcare la configurazione sconnessa
+
+				//se non ci sono configurazioni esce
+
+				GPIO_IF_LedOn(MCU_RED_LED_GPIO);
+				}
+	    	}
+	    }
+
 
 }
