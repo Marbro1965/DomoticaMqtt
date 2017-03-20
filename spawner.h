@@ -25,6 +25,8 @@ void* httpServerThread;
 
 void* i2cThread;
 
+void* mainThread;
+
 void initThreadsPointer();
 
 void initUdpThread();
@@ -42,6 +44,8 @@ void initMqttClient();
 void initDefinitionsThread();
 
 void initHTTPServerThread();
+
+void initMainThread();
 
 void terminateThreads();
 

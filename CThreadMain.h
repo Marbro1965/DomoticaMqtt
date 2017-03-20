@@ -14,7 +14,13 @@ class CThreadMain: public CThread {
 
 public:
 	CThreadMain();
+
 	virtual ~CThreadMain();
+
+	void Run();
+
+	//
+	unsigned int ReadDeviceConfiguration();
 };
 
 #endif /* CTHREADMAIN_H_ */

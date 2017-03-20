@@ -76,7 +76,7 @@
 
 //Main Thread
 
-#include "CThreadMain.h"
+//#include "CThreadMain.h"
 
 #define UART_PRINT              Report
 
@@ -104,92 +104,9 @@ extern void (* const g_pfnVectors[])(void);
 #endif
 #endif
 
-unsigned short g_usTimerInts;
 
-extern volatile unsigned long  g_ulStatus;
 
-/* AP Security Parameters */
-SlSecParams_t SecurityParams = {0};
 
-//*****************************************************************************
-//
-//! Periodic Timer Interrupt Handler
-//!
-//! \param None
-//!
-//! \return None
-//
-//*****************************************************************************
-void
-TimerPeriodicIntHandler(void)
-{
-    unsigned long ulInts;
-
-    //
-    // Clear all pending interrupts from the timer we are
-    // currently using.
-    //
-    ulInts = MAP_TimerIntStatus(TIMERA0_BASE, true);
-    MAP_TimerIntClear(TIMERA0_BASE, ulInts);
-
-    //
-    // Increment our interrupt counter.
-    //
-    g_usTimerInts++;
-    if(!(g_usTimerInts & 0x1))
-    {
-        //
-        // Off Led
-        //
-        GPIO_IF_LedOff(MCU_RED_LED_GPIO);
-    }
-    else
-    {
-        //
-        // On Led
-        //
-        GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-    }
-}
-
-//****************************************************************************
-//
-//! Function to configure and start timer to blink the LED while device is
-//! trying to connect to an AP
-//!
-//! \param none
-//!
-//! return none
-//
-//****************************************************************************
-void LedTimerConfigNStart()
-{
-    //
-    // Configure Timer for blinking the LED for IP acquisition
-    //
-    Timer_IF_Init(PRCM_TIMERA0,TIMERA0_BASE,TIMER_CFG_PERIODIC,TIMER_A,0);
-    Timer_IF_IntSetup(TIMERA0_BASE,TIMER_A,TimerPeriodicIntHandler);
-    Timer_IF_Start(TIMERA0_BASE,TIMER_A,100);
-}
-
-//****************************************************************************
-//
-//! Disable the LED blinking Timer as Device is connected to AP
-//!
-//! \param none
-//!
-//! return none
-//
-//****************************************************************************
-void LedTimerDeinitStop()
-{
-    //
-    // Disable the LED blinking Timer as Device is connected to AP
-    //
-    Timer_IF_Stop(TIMERA0_BASE,TIMER_A);
-    Timer_IF_DeInit(TIMERA0_BASE,TIMER_A);
-
-}
 
 //*****************************************************************************
 //
@@ -223,181 +140,6 @@ void BoardInit(void)
     PRCMCC3200MCUInit();
 }
 
-//****************************************************************************
-//
-//!    \brief Read Force AP GPIO and Configure Mode - 1(Access Point Mode)
-//!                                                  - 0 (Station Mode)
-//!
-//! \return                        None
-//
-//****************************************************************************
-unsigned int ReadDeviceConfiguration()
-{
-    unsigned int uiGPIOPort;
-    unsigned char pucGPIOPin;
-    unsigned char ucPinValue;
-
-    //Read GPIO
-    GPIO_IF_GetPortNPin(SH_GPIO_3,&uiGPIOPort,&pucGPIOPin);
-    ucPinValue = GPIO_IF_Get(SH_GPIO_3,uiGPIOPort,pucGPIOPin);
-
-    //If Connected to VCC, Mode is AP
-    if(ucPinValue == 1)
-    {
-		//AP Mode
-		return ROLE_AP;
-    }
-    else
-    {
-		//STA Mode
-		return ROLE_STA;
-    }
-
-}
-
-//*****************************************************************************
-//
-//!
-//!
-//!
-//! \param  none
-//!
-//! This function
-//!    1. Initializes network driver and connects to the default AP
-//!    2. Initializes the threads
-//! \return None
-//!
-//*****************************************************************************
-
-void SpawnThread(void *pvParameters)
-{
-    
-    long lRetVal = -1;
-
-    unsigned int uMode = ReadDeviceConfiguration();
-
-    //Parse data read
-    initDefinitionsThread();
-
-
-
-
-init:
-    //
-    // Configure LED
-    //
-    GPIO_IF_LedConfigure(LED1);//|LED2|LED3); //GPIO_IF_LedConfigure(LED1|LED2|LED3);
-    GPIO_IF_LedOff(MCU_RED_LED_GPIO);
-    //GPIO_IF_LedOff(MCU_GREEN_LED_GPIO);
-
-    //
-    // Reset The state of the machine
-    //
-    Network_IF_ResetMCUStateMachine();
-
-    //
-    // Start the driver
-    //
-    lRetVal = Network_IF_InitDriver(uMode);
-    if(lRetVal < 0)
-    {
-       LOOP_FOREVER();
-    }
-
-    // switch on Green LED to indicate Simplelink is properly up
-    //GPIO_IF_LedOn(MCU_ON_IND);
-
-    // Start Timer to blink Red LED till AP connection
-    LedTimerConfigNStart();
-
-
-    if (ROLE_AP==uMode)
-    	goto role_as_accessPoint;
-
-
-    // Initialize AP security params
-    SecurityParams.Key = GetSecurityKey();
-    SecurityParams.KeyLen = GetSecurityKeyLen();
-    SecurityParams.Type = GetSecurityType();
-
-    //
-    // Connect to the Access Point
-    //
-    lRetVal = Network_IF_ConnectAP(GetSSIDName(), SecurityParams);
-    if(lRetVal < 0)
-    {
-       LOOP_FOREVER();
-    }
-
-role_as_accessPoint:
-
-    //
-    // Disable the LED blinking Timer as Device is connected to AP
-    //
-    LedTimerDeinitStop();
-
-    //
-    // Switch ON RED LED to indicate that Device acquired an IP
-    //
-    GPIO_IF_LedOn(MCU_IP_ALLOC_IND);
-
-    UtilsDelay(20000000);
-
-    GPIO_IF_LedOff(MCU_RED_LED_GPIO);
-    //GPIO_IF_LedOff(MCU_ORANGE_LED_GPIO);
-    //GPIO_IF_LedOff(MCU_GREEN_LED_GPIO);
-
-    if (ROLE_AP!=uMode)
-    {
-
-        //SPAWNING IO Thread.... Create the message queue
-        initIOThread();
-
-        //SPAWNING UDP Thread
-        initUdpThread();
-
-
-        //SPAWNING Server Thread
-        initServerThread();
-
-        //SPAWNING MQTT Client
-
-    	initMqttClient();
-
-
-    	//
-
-
-    }
-    else
-    {
-    	//start the HTTP SERVER
-    	initHTTPServerThread();
-
-
-    }
-
-    for(;;)
-    {
-    	//if AP disconnect
-    	if (ROLE_AP!=uMode)
-    	{
-			if (IS_CONNECTED(g_ulStatus))
-				;
-			else
-			{
-				terminateThreads();
-				osi_Sleep(5000);
-				goto init;
-
-
-			}
-
-		}
-    	osi_Sleep(5000);
-    }
-
-}
 
 //*****************************************************************************
 //
@@ -462,7 +204,6 @@ void main()
         LOOP_FOREVER();
     }
 
-
     //
     // Start the SimpleLink Host
     //
@@ -472,14 +213,7 @@ void main()
         LOOP_FOREVER();
     }
 
-    //
-    //Starts the threads
-    //
-    //lRetVal = osi_TaskCreate(SpawnThread,
-    //                        (const signed char *)"Mqtt Client App",
-    //                        OSI_STACK_SIZE, NULL, 2, NULL );
-
-    //lRetVal = osi_TaskCreate(&CThreadMain::Create,(const signed char *)"MainThread Supervisor",OSI_STACK_SIZE, new CThreadMain(), 2,NULL);
+    lRetVal = osi_TaskCreate(initMainThread,(const signed char *)"MainThread Supervisor",OSI_STACK_SIZE, NULL, 2,NULL);
 
     if(lRetVal < 0)
     {

@@ -61,6 +61,14 @@ typedef struct
 
 typedef struct
 {
+  unsigned long ultaskId;
+
+  unsigned long ulmessage;
+
+} message;
+
+typedef struct
+{
     const char* ptr;
     int bytes_left;
 } buffer_ctx;
@@ -108,6 +116,8 @@ protected:
 
 	static SlMqttClientLibCfg_t Mqtt_Client;
 
+	static SlSecParams_t SecurityParams;
+
 	void *app_hndl;
 
 	bool bToggle;
@@ -123,6 +133,8 @@ protected:
 	static float fAmbientTemp;
 
 	static configuration config;
+
+	static unsigned short g_usTimerInts;
 
 public:
 
@@ -165,6 +177,12 @@ public:
 
 		return &config;
 	}
+
+	static void LedTimerConfigNStart();
+
+	static void LedTimerDeinitStop();
+
+	static void TimerPeriodicIntHandler();
 };
 
 #endif /* DOMOTICAMQTT_CTHREAD_H_ */

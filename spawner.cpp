@@ -23,6 +23,8 @@
 
 #include "CThreadDefinitions.h"
 
+#include "CThreadMain.h"
+
 #include "simplelink.h"
 
 #include "osi.h"
@@ -121,6 +123,14 @@ void initHTTPServerThread(){
 		httpServerThread = new CThreadHTTPServer();
 
 	osi_TaskCreate(&CThreadHTTPServer::Create,(const signed char *)"HTTP SERVER thread",OSI_STACK_SIZE, httpServerThread, 2,NULL);
+
+}
+
+void initMainThread(){
+
+	mainThread = new CThreadMain();
+
+	osi_TaskCreate(&CThreadMain::Create,(const signed char *)"MainThread",OSI_STACK_SIZE, mainThread, 2,NULL);
 
 }
 
