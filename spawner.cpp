@@ -132,6 +132,12 @@ void initMainThread(){
 
 	osi_TaskCreate(&CThreadMain::Create,(const signed char *)"MainThread",OSI_STACK_SIZE, mainThread, 2,NULL);
 
+	while (1)
+		{
+		osi_Sleep(1000);
+		};
+
+
 }
 
 void terminateThreads(){

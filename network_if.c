@@ -929,6 +929,7 @@ Network_IF_ConnectAP(char *pcSsid, SlSecParams_t SecurityParams)
     unsigned long ulDefGateway = 0;
     unsigned long ulDns = 0;
 
+    g_usConnectIndex = 0;
     //
     // Disconnect from the AP
     //
@@ -973,7 +974,7 @@ Network_IF_ConnectAP(char *pcSsid, SlSecParams_t SecurityParams)
         CLR_STATUS_BIT(g_ulStatus, STATUS_BIT_CONNECTION);
         CLR_STATUS_BIT(g_ulStatus, STATUS_BIT_IP_AQUIRED);
         UART_PRINT("Device could not connect to %s\n\r",pcSsid);
-
+        return -1;
     }
 #endif
     //

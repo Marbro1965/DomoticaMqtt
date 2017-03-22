@@ -188,7 +188,7 @@ void main()
         LOOP_FOREVER();
     }
 
-    //Init Temprature Sensor
+    //Init Temperature Sensor
     lRetVal = TMP006DrvOpen();
     if(lRetVal < 0)
     {

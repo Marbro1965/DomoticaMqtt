@@ -4,3 +4,7 @@ FreeRTOS/
 
 #files
 *.obj
+*.mk
+*.map
+*.bin
+*.xml

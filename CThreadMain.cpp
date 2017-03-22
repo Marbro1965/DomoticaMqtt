@@ -72,6 +72,8 @@ void CThreadMain::Run(){
     //
     // Configure LED
     //
+reconnection:
+
     GPIO_IF_LedConfigure(LED1);//|LED2|LED3); //GPIO_IF_LedConfigure(LED1|LED2|LED3);
     GPIO_IF_LedOff(MCU_RED_LED_GPIO);
     //
@@ -101,7 +103,11 @@ void CThreadMain::Run(){
     lRetVal = Network_IF_ConnectAP(GetSSIDName(), SecurityParams);
     if(lRetVal < 0)
     {
-       LOOP_FOREVER();
+       //LOOP_FOREVER();
+    	CThread::LedTimerDeinitStop();
+    	GPIO_IF_LedOff(MCU_RED_LED_GPIO);
+    	osi_Sleep(4000);
+    	goto reconnection;
     }
 role_as_accessPoint:
     //
@@ -135,9 +141,9 @@ role_as_accessPoint:
 				;
 			else
 			{
-				terminateThreads();
-				osi_Sleep(5000);
-				//goto init;
+				//terminateThreads();
+				osi_Sleep(2000);
+				goto reconnection;
 			}
 
 		}

@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/TI/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS
+CG_TOOL_ROOT := C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -12,26 +12,34 @@ GEN_CMDS__FLAG :=
 ORDERED_OBJS += \
 "./CThread.obj" \
 "./CThreadDefinitions.obj" \
+"./CThreadHTTPServer.obj" \
+"./CThreadI2C.obj" \
 "./CThreadIO.obj" \
+"./CThreadMain.obj" \
 "./CThreadMqttClient.obj" \
 "./CThreadTCPClient.obj" \
 "./CThreadTCPServer.obj" \
 "./CThreadUDP.obj" \
+"./bma222drv.obj" \
 "./button_if.obj" \
 "./gpio_if.obj" \
+"./i2c_if.obj" \
+"./ini.obj" \
 "./main.obj" \
+"./network_common.obj" \
 "./network_if.obj" \
 "./pinmux.obj" \
 "./spawner.obj" \
 "./timer_if.obj" \
+"./tmp006drv.obj" \
 "./uart_if.obj" \
 "../cc3200v1p32.cmd" \
 $(GEN_CMDS__FLAG) \
--l"libc.a" \
--l"C:/TI/CC3200SDK_1.1.0/cc3200-sdk/example/mqtt_client/ccs/../../../oslib/ccs/ti_rtos/ti_rtos.a" \
--l"C:/TI/CC3200SDK_1.1.0/cc3200-sdk/example/mqtt_client/ccs/../../../simplelink/ccs/OS/simplelink.a" \
--l"C:/TI/CC3200SDK_1.1.0/cc3200-sdk/example/mqtt_client/ccs/../../../netapps/mqtt/ccs/client/mqtt.a" \
--l"C:/TI/CC3200SDK_1.1.0/cc3200-sdk/example/mqtt_client/ccs/../../../driverlib/ccs/Release/driverlib.a" \
+-llibc.a \
+-l"C:/TI/CC3200SDK_1.1.0/cc3200-sdk/oslib/ccs/ti_rtos/ti_rtos.a" \
+-l"C:/TI/CC3200SDK_1.1.0/cc3200-sdk/simplelink/ccs/OS/simplelink.a" \
+-l"C:/TI/CC3200SDK_1.1.0/cc3200-sdk/netapps/mqtt/ccs/client/mqtt.a" \
+-l"C:/TI/CC3200SDK_1.1.0/cc3200-sdk/driverlib/ccs/Release/driverlib.a" \
 
 -include ../makefile.init
 
@@ -62,6 +70,9 @@ ifneq ($(strip $(ASM_DEPS)),)
 endif
 ifneq ($(strip $(CC_DEPS)),)
 -include $(CC_DEPS)
+endif
+ifneq ($(strip $(SV7A_DEPS)),)
+-include $(SV7A_DEPS)
 endif
 ifneq ($(strip $(S55_DEPS)),)
 -include $(S55_DEPS)
@@ -154,14 +165,14 @@ all: DomoticaMqtt.out
 DomoticaMqtt.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Linker'
-	"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=fpalib -me -g --gcc --define=ccs --define=USE_TIRTOS --define=SL_PLATFORM_MULTI_THREADED --define=cc3200 --diag_wrap=off --diag_warning=225 --display_error_number --gen_func_subsections=off --abi=eabi -z -m"DomoticaMqtt.map" --stack_size=0x4000 --heap_size=0x8000 -i"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/lib" -i"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/include" --reread_libs --display_error_number --warn_sections --diag_wrap=off --xml_link_info="DomoticaMqtt_linkInfo.xml" --rom_model -o "DomoticaMqtt.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=fpalib -me -g --gcc --define=ccs --define=USE_TIRTOS --define=SL_PLATFORM_MULTI_THREADED --define=cc3200 --diag_wrap=off --diag_warning=225 --display_error_number --gen_func_subsections=off --abi=eabi -z -m"DomoticaMqtt.map" --stack_size=0x4000 --heap_size=0x8000 -i"C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/lib" -i"C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include" --reread_libs --display_error_number --warn_sections --diag_wrap=off --xml_link_info="DomoticaMqtt_linkInfo.xml" --rom_model -o "DomoticaMqtt.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
 
 DomoticaMqtt.bin: $(EXE_OUTPUTS)
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/TI/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/bin/armhex"  -o "DomoticaMqtt.bin" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/bin/armhex"  -o "DomoticaMqtt.bin" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $@'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build
@@ -169,14 +180,14 @@ DomoticaMqtt.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "CThread.pp" "CThreadDefinitions.pp" "CThreadIO.pp" "CThreadMqttClient.pp" "CThreadTCPClient.pp" "CThreadTCPServer.pp" "CThreadUDP.pp" "spawner.pp" 
-	-$(RM) "button_if.pp" "gpio_if.pp" "main.pp" "network_if.pp" "pinmux.pp" "timer_if.pp" "uart_if.pp" 
-	-$(RM) "CThread.obj" "CThreadDefinitions.obj" "CThreadIO.obj" "CThreadMqttClient.obj" "CThreadTCPClient.obj" "CThreadTCPServer.obj" "CThreadUDP.obj" "button_if.obj" "gpio_if.obj" "main.obj" "network_if.obj" "pinmux.obj" "spawner.obj" "timer_if.obj" "uart_if.obj" 
+	-$(RM) "CThread.d" "CThreadDefinitions.d" "CThreadHTTPServer.d" "CThreadI2C.d" "CThreadIO.d" "CThreadMain.d" "CThreadMqttClient.d" "CThreadTCPClient.d" "CThreadTCPServer.d" "CThreadUDP.d" "spawner.d" 
+	-$(RM) "bma222drv.d" "button_if.d" "gpio_if.d" "i2c_if.d" "ini.d" "main.d" "network_common.d" "network_if.d" "pinmux.d" "timer_if.d" "tmp006drv.d" "uart_if.d" 
+	-$(RM) "CThread.obj" "CThreadDefinitions.obj" "CThreadHTTPServer.obj" "CThreadI2C.obj" "CThreadIO.obj" "CThreadMain.obj" "CThreadMqttClient.obj" "CThreadTCPClient.obj" "CThreadTCPServer.obj" "CThreadUDP.obj" "bma222drv.obj" "button_if.obj" "gpio_if.obj" "i2c_if.obj" "ini.obj" "main.obj" "network_common.obj" "network_if.obj" "pinmux.obj" "spawner.obj" "timer_if.obj" "tmp006drv.obj" "uart_if.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
 post-build:
-	-"C:/TI/ccsv6/utils/tiobj2bin/tiobj2bin" "DomoticaMqtt.out" "DomoticaMqtt.bin" "C:/TI/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/bin/armofd" "C:/TI/ccsv6/tools/compiler/ti-cgt-arm_15.12.1.LTS/bin/armhex" "C:/TI/ccsv6/utils/tiobj2bin/mkhex4bin"
+	-"C:/ti/ccsv6/utils/tiobj2bin/tiobj2bin" "DomoticaMqtt.out" "DomoticaMqtt.bin" "C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/bin/armofd" "C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/bin/armhex" "C:/ti/ccsv6/utils/tiobj2bin/mkhex4bin"
 	-@echo ' '
 
 .PHONY: all clean dependents
