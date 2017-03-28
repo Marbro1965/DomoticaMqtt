@@ -136,16 +136,21 @@ protected:
 
 	static unsigned short g_usTimerInts;
 
-public:
-
 	/*Message Queue for IO*/
 	static OsiMsgQ_t 	g_PBQueue;
 	/*Message Queue for File Read*/
 	static OsiMsgQ_t    g_FileReadQueue;
-	/*Message Queue for File Write*/
-	static OsiMsgQ_t    g_FileWriteQueue;
 	/*Message Queue for I2C Read*/
 	static OsiMsgQ_t    g_I2CQueue;
+
+	static OsiMsgQ_t    g_MqttSendQueue;
+
+	static OsiMsgQ_t    g_MqttReceiveQueue;
+
+public:
+
+	/*Message Queue for File Write*/
+	static OsiMsgQ_t    g_FileWriteQueue;
 
 
 	CThread();

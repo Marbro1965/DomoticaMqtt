@@ -123,7 +123,7 @@ void CThreadHTTPServer::Run(){
 
     	//handle message
     	osi_messages RecvQue = NO_MESSAGE;
-	    osi_MsgQRead( &CThread::g_FileWriteQueue, &RecvQue, OSI_NO_WAIT);
+	    osi_MsgQRead( &g_FileWriteQueue, &RecvQue, OSI_NO_WAIT);
 	    if(SAVE_POST_DATA == RecvQue)
 	    	{
 	    	CThreadDefinitions::outputFile();

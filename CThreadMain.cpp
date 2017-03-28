@@ -7,6 +7,7 @@
 
 #include "CThreadMain.h"
 
+#include "CThreadMqttClient.h"
 // common interface includes
 #include "network_if.h"
 #include "gpio_if.h"
@@ -132,6 +133,9 @@ role_as_accessPoint:
     {
 
     }
+
+    //Lettura dei dati dal file ini
+    CThreadMqttClient::InitUserConnectConfig();
 
     for(;;)
     {

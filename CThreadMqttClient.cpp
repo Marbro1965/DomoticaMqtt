@@ -195,9 +195,6 @@ void CThreadMqttClient::InitUserConnectConfig()
 	pub_topic_sw4 = new char[i];
 	sprintf((char*)pub_topic_sw4,"%s",data);
 
-	//i = sprintf(data,"%s%s",GetBrokerPublishEntry(),PUB_TOPIC_FOR_MOVEMENT);
-	//pub_topic_sw5 = new char[i];
-	//sprintf((char*)pub_topic_sw5,"%s",data);
 
 }
 
@@ -223,7 +220,7 @@ void CThreadMqttClient::Run(){
 
 	connect_config *local_con_conf = (connect_config *)app_hndl;
 
-	InitUserConnectConfig();
+	//InitUserConnectConfig();
 
 	lRetVal = sl_ExtLib_MqttClientInit(&Mqtt_Client);
 	if(lRetVal != 0)
