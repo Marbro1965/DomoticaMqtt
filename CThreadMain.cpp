@@ -134,8 +134,11 @@ role_as_accessPoint:
 
     }
 
-    //Lettura dei dati dal file ini
+    //Impostazione struttura broker
     CThreadMqttClient::InitUserConnectConfig();
+
+    //Libreria Mqtt (Thread????)
+    CThreadMqttClient::InitMqttClientLibrary();
 
     for(;;)
     {

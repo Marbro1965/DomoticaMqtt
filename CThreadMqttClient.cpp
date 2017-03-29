@@ -198,12 +198,28 @@ void CThreadMqttClient::InitUserConnectConfig()
 
 }
 
-CThreadMqttClient::CThreadMqttClient() {
+long CThreadMqttClient::InitMqttClientLibrary(void)
+{
+	long lRetVal = -1;
+
+	lRetVal = sl_ExtLib_MqttClientInit(&Mqtt_Client);
+	if(lRetVal != 0)
+		{
+	    // lib initialization failed
+	    UART_PRINT("MQTT Client lib initialization failed\n\r");
+	    LOOP_FOREVER();
+	    }
+	return lRetVal;
+}
+
+CThreadMqttClient::CThreadMqttClient(int broker) {
 	// TODO Auto-generated constructor stub
 
 	app_hndl = (void*)usr_connect_config;
 
 	bToggle = false;
+
+	_brokerCount = broker;
 }
 
 CThreadMqttClient::~CThreadMqttClient() {
@@ -214,7 +230,7 @@ CThreadMqttClient::~CThreadMqttClient() {
 void CThreadMqttClient::Run(){
 
     long lRetVal = -1;
-    int iCount = 0;
+    //int iCount = 0;
     int iNumBroker = 0;
     int iConnBroker = 0;
 
@@ -222,67 +238,65 @@ void CThreadMqttClient::Run(){
 
 	//InitUserConnectConfig();
 
-	lRetVal = sl_ExtLib_MqttClientInit(&Mqtt_Client);
-	if(lRetVal != 0)
-		{
-	    // lib initialization failed
-	    UART_PRINT("MQTT Client lib initialization failed\n\r");
-	    LOOP_FOREVER();
-	    }
+//	lRetVal = sl_ExtLib_MqttClientInit(&Mqtt_Client);
+//	if(lRetVal != 0)
+//		{
+//	    // lib initialization failed
+//	    UART_PRINT("MQTT Client lib initialization failed\n\r");
+//	    LOOP_FOREVER();
+//	    }
 
 	 /******************* connection to the broker ***************************/
 	//iNumBroker = sizeof(usr_connect_config)/sizeof(connect_config);
 
-	iNumBroker = CThread::config.brokerNumber;
+//	iNumBroker = CThread::config.brokerNumber;
 
-	if(iNumBroker > MAX_BROKER_CONN)
-		{
-	    UART_PRINT("Num of brokers are more then max num of brokers\n\r");
-	    LOOP_FOREVER();
-	    }
+//	if(iNumBroker > MAX_BROKER_CONN)
+//		{
+//	    UART_PRINT("Num of brokers are more then max num of brokers\n\r");
+//	    LOOP_FOREVER();
+//	    }
 
-	while(iCount < iNumBroker)
-	    {
 	    //create client context
-	    local_con_conf[iCount].clt_ctx =  sl_ExtLib_MqttClientCtxCreate(&local_con_conf[iCount].broker_config,
-	                                      &local_con_conf[iCount].CallBAcks,
-	                                      &(local_con_conf[iCount]));
+	    local_con_conf[_brokerCount].clt_ctx =  sl_ExtLib_MqttClientCtxCreate(&local_con_conf[_brokerCount].broker_config,
+	                                      &local_con_conf[_brokerCount].CallBAcks,
+	                                      &(local_con_conf[_brokerCount]));
 
 	    //
 	    // Set Client ID
 	    //
-	    sl_ExtLib_MqttClientSet((void*)local_con_conf[iCount].clt_ctx,
+	    sl_ExtLib_MqttClientSet((void*)local_con_conf[_brokerCount].clt_ctx,
 	                            SL_MQTT_PARAM_CLIENT_ID,
-	                            local_con_conf[iCount].client_id,
-	                            strlen((char*)(local_con_conf[iCount].client_id)));
+	                            local_con_conf[_brokerCount].client_id,
+	                            strlen((char*)(local_con_conf[_brokerCount].client_id)));
 
 	    //
 	    // Set will Params
 	    //
-	    if(local_con_conf[iCount].will_params.will_topic != NULL)
+	    if(local_con_conf[_brokerCount].will_params.will_topic != NULL)
 	    	{
-	        sl_ExtLib_MqttClientSet((void*)local_con_conf[iCount].clt_ctx,
+	        sl_ExtLib_MqttClientSet((void*)local_con_conf[_brokerCount].clt_ctx,
 	                                    SL_MQTT_PARAM_WILL_PARAM,
-	                                    &(local_con_conf[iCount].will_params),
+	                                    &(local_con_conf[_brokerCount].will_params),
 	                                    sizeof(SlMqttWill_t));
 	        }
 
 	    //
 	    // setting username and password
 	    //
-	    if(local_con_conf[iCount].usr_name != NULL)
+	    if(local_con_conf[_brokerCount].usr_name != NULL)
 	       {
-	       sl_ExtLib_MqttClientSet((void*)local_con_conf[iCount].clt_ctx,
+	       sl_ExtLib_MqttClientSet((void*)local_con_conf[_brokerCount].clt_ctx,
 	                                SL_MQTT_PARAM_USER_NAME,
-	                                local_con_conf[iCount].usr_name,
-	                                strlen((char*)local_con_conf[iCount].usr_name));
+	                                local_con_conf[_brokerCount].usr_name,
+	                                strlen((char*)local_con_conf[_brokerCount].usr_name));
 
-	       if(local_con_conf[iCount].usr_pwd != NULL)
+	       if(local_con_conf[_brokerCount].usr_pwd != NULL)
 	            {
-	            sl_ExtLib_MqttClientSet((void*)local_con_conf[iCount].clt_ctx,
+	            sl_ExtLib_MqttClientSet((void*)local_con_conf[_brokerCount].clt_ctx,
 	                                SL_MQTT_PARAM_PASS_WORD,
-	                                local_con_conf[iCount].usr_pwd,
-	                                strlen((char*)local_con_conf[iCount].usr_pwd));
+	                                local_con_conf[_brokerCount].usr_pwd,
+	                                strlen((char*)local_con_conf[_brokerCount].usr_pwd));
 	            }
 	        }
 
@@ -296,9 +310,9 @@ void CThreadMqttClient::Run(){
 
 	    unsigned long ret;
 
-	    ret = sl_ExtLib_MqttClientConnect((void*)local_con_conf[iCount].clt_ctx,
-                local_con_conf[iCount].is_clean,
-                local_con_conf[iCount].keep_alive_time) & 0xFF;
+	    ret = sl_ExtLib_MqttClientConnect((void*)local_con_conf[_brokerCount].clt_ctx,
+                local_con_conf[_brokerCount].is_clean,
+                local_con_conf[_brokerCount].keep_alive_time) & 0xFF;
 
 	    while(ret!=0)
 	    		{
@@ -314,74 +328,63 @@ void CThreadMqttClient::Run(){
 	    		if (iReconnect>3)
 	    			break;
 
-	    	    ret = sl_ExtLib_MqttClientConnect((void*)local_con_conf[iCount].clt_ctx,
-	                    local_con_conf[iCount].is_clean,
-	                    local_con_conf[iCount].keep_alive_time) & 0xFF;
+	    	    ret = sl_ExtLib_MqttClientConnect((void*)local_con_conf[_brokerCount].clt_ctx,
+	                    local_con_conf[_brokerCount].is_clean,
+	                    local_con_conf[_brokerCount].keep_alive_time) & 0xFF;
 
 
 	    		}
 
 
 
-//	    if((sl_ExtLib_MqttClientConnect((void*)local_con_conf[iCount].clt_ctx,
-//	                            local_con_conf[iCount].is_clean,
-//	                            local_con_conf[iCount].keep_alive_time) & 0xFF) != 0)
 	    if (ret!=0)
 	        {
-	        UART_PRINT("\n\rBroker connect fail for conn no. %d \n\r",iCount+1);
+	        UART_PRINT("\n\rBroker connect fail for conn no. %d \n\r",_brokerCount+1);
 	        //delete the context for this connection
-	        sl_ExtLib_MqttClientCtxDelete(local_con_conf[iCount].clt_ctx);
+	        sl_ExtLib_MqttClientCtxDelete(local_con_conf[_brokerCount].clt_ctx);
 
-	         break;
+	        goto end;
 	        }
 	        else
 	        {
-	        UART_PRINT("\n\rSuccess: conn to Broker no. %d\n\r ", iCount+1);
-	        local_con_conf[iCount].is_connected = true;
-	        iConnBroker++;
+	        UART_PRINT("\n\rSuccess: conn to Broker no. %d\n\r ", _brokerCount+1);
+	        local_con_conf[_brokerCount].is_connected = true;
+
 	        }
 
 	        //
 	        // Subscribe to topics
 	        //
-	        if(sl_ExtLib_MqttClientSub((void*)local_con_conf[iCount].clt_ctx,
-	                                   local_con_conf[iCount].topic,
-	                                   local_con_conf[iCount].qos, TOPIC_COUNT) < 0)
+	        if(sl_ExtLib_MqttClientSub((void*)local_con_conf[_brokerCount].clt_ctx,
+	                                   local_con_conf[_brokerCount].topic,
+	                                   local_con_conf[_brokerCount].qos, TOPIC_COUNT) < 0)
 	        {
-	        UART_PRINT("\n\r Subscription Error for conn no. %d\n\r", iCount+1);
-	        UART_PRINT("Disconnecting from the broker\r\n");
-	        sl_ExtLib_MqttClientDisconnect(local_con_conf[iCount].clt_ctx);
-	        		local_con_conf[iCount].is_connected = false;
+	        	UART_PRINT("\n\r Subscription Error for conn no. %d\n\r", _brokerCount+1);
+	        	UART_PRINT("Disconnecting from the broker\r\n");
+	        	sl_ExtLib_MqttClientDisconnect(local_con_conf[_brokerCount].clt_ctx);
+	        			local_con_conf[_brokerCount].is_connected = false;
 
-	        //delete the context for this connection
-	        sl_ExtLib_MqttClientCtxDelete(local_con_conf[iCount].clt_ctx);
-	        iConnBroker--;
-	        break;
+				//delete the context for this connection
+				sl_ExtLib_MqttClientCtxDelete(local_con_conf[_brokerCount].clt_ctx);
+
+				goto end;
 	        }
 	        else
 	        {
-	        int iSub;
-	        UART_PRINT("Client subscribed on following topics:\n\r");
-	        for(iSub = 0; iSub < local_con_conf[iCount].num_topics; iSub++)
-	           {
-	           UART_PRINT("%s\n\r", local_con_conf[iCount].topic[iSub]);
+
+	        	UART_PRINT("Client subscribed on following topics:\n\r");
+	        	for(int iSub = 0; iSub < local_con_conf[_brokerCount].num_topics; iSub++)
+	        	{
+	        		UART_PRINT("%s\n\r", local_con_conf[_brokerCount].topic[iSub]);
 	           }
 	        }
-	        iCount++;
-	    }
+
+
 	//
-	if(iConnBroker < 1)
-	    {
-	     //
-	     // no succesful connection to broker
-	     //
-	    goto end;
 
-	    }
 
-	iCount = 0;
 	//when everything ok start thread temperature
-	initI2CThread();
+	//initI2CThread();
 
 	HandleMessages();
 	//

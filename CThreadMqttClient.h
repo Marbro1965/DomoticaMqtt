@@ -19,11 +19,13 @@
 
 class CThreadMqttClient:public CThread {
 
+protected:
 
+	int _brokerCount;
 
 public:
 
-	CThreadMqttClient();
+	CThreadMqttClient(int);
 
 	virtual ~CThreadMqttClient();
 
@@ -48,6 +50,8 @@ public:
 	static void ToggleLedState(ledEnum LedNum);
 
 	static void InitUserConnectConfig();
+
+	static long InitMqttClientLibrary(void);
 
 };
 

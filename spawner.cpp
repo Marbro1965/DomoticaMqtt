@@ -109,7 +109,7 @@ void initMqttClient(){
 
 	if (0==mqttThread)
 
-		mqttThread = new CThreadMqttClient();
+		mqttThread = new CThreadMqttClient(0);
 
 	osi_TaskCreate(&CThreadMqttClient::Create,(const signed char *)"MQTT thread",OSI_STACK_SIZE, mqttThread, 2,NULL);
 
