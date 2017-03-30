@@ -140,6 +140,15 @@ role_as_accessPoint:
     //Libreria Mqtt (Thread????)
     CThreadMqttClient::InitMqttClientLibrary();
 
+    //Creazione della coda dei messaggi
+    CThread::CreateMessageQueue();
+
+    //creazione dei task MQTT
+
+    //creazione task I2C
+
+    //creazione task I/O
+
     for(;;)
     {
     	if (ROLE_AP!=uMode)
@@ -150,6 +159,7 @@ role_as_accessPoint:
 			{
 				//terminateThreads();
 				osi_Sleep(2000);
+
 				goto reconnection;
 			}
 

@@ -98,9 +98,9 @@ void CThreadMqttClient::InitUserConnectConfig()
 	usr_connect_config[0].is_clean = true;
 	usr_connect_config[0].keep_alive_time = KEEP_ALIVE_TIMER;
 
-	usr_connect_config[0].CallBAcks.sl_ExtLib_MqttRecv = CThreadMqttClient::Mqtt_Recv;
-	usr_connect_config[0].CallBAcks.sl_ExtLib_MqttEvent = CThreadMqttClient::sl_MqttEvt;
-	usr_connect_config[0].CallBAcks.sl_ExtLib_MqttDisconn = CThreadMqttClient::sl_MqttDisconnect;
+	usr_connect_config[0].CallBacks.sl_ExtLib_MqttRecv = CThreadMqttClient::Mqtt_Recv;
+	usr_connect_config[0].CallBacks.sl_ExtLib_MqttEvent = CThreadMqttClient::sl_MqttEvt;
+	usr_connect_config[0].CallBacks.sl_ExtLib_MqttDisconn = CThreadMqttClient::sl_MqttDisconnect;
 
 	usr_connect_config[0].num_topics = TOPIC_COUNT;
 	////////TOPIC 1
@@ -154,9 +154,9 @@ void CThreadMqttClient::InitUserConnectConfig()
 	usr_connect_config[1].is_clean = true;
 	usr_connect_config[1].keep_alive_time = KEEP_ALIVE_TIMER;
 
-	usr_connect_config[1].CallBAcks.sl_ExtLib_MqttRecv = CThreadMqttClient::Mqtt_Recv;
-	usr_connect_config[1].CallBAcks.sl_ExtLib_MqttEvent = CThreadMqttClient::sl_MqttEvt;
-	usr_connect_config[1].CallBAcks.sl_ExtLib_MqttDisconn = CThreadMqttClient::sl_MqttDisconnect;
+	usr_connect_config[1].CallBacks.sl_ExtLib_MqttRecv = CThreadMqttClient::Mqtt_Recv;
+	usr_connect_config[1].CallBacks.sl_ExtLib_MqttEvent = CThreadMqttClient::sl_MqttEvt;
+	usr_connect_config[1].CallBacks.sl_ExtLib_MqttDisconn = CThreadMqttClient::sl_MqttDisconnect;
 
 	usr_connect_config[1].num_topics = TOPIC_COUNT;
 	////////TOPIC 1
@@ -257,18 +257,20 @@ void CThreadMqttClient::Run(){
 //	    LOOP_FOREVER();
 //	    }
 
-	    //create client context
-	    local_con_conf[_brokerCount].clt_ctx =  sl_ExtLib_MqttClientCtxCreate(&local_con_conf[_brokerCount].broker_config,
-	                                      &local_con_conf[_brokerCount].CallBAcks,
-	                                      &(local_con_conf[_brokerCount]));
+	//
+	//create client context
+	//
+	local_con_conf[_brokerCount].clt_ctx =  sl_ExtLib_MqttClientCtxCreate(&local_con_conf[_brokerCount].broker_config,
+									  &local_con_conf[_brokerCount].CallBacks,
+									  &(local_con_conf[_brokerCount]));
 
-	    //
-	    // Set Client ID
-	    //
-	    sl_ExtLib_MqttClientSet((void*)local_con_conf[_brokerCount].clt_ctx,
-	                            SL_MQTT_PARAM_CLIENT_ID,
-	                            local_con_conf[_brokerCount].client_id,
-	                            strlen((char*)(local_con_conf[_brokerCount].client_id)));
+	//
+	// Set Client ID
+	//
+	sl_ExtLib_MqttClientSet((void*)local_con_conf[_brokerCount].clt_ctx,
+							SL_MQTT_PARAM_CLIENT_ID,
+							local_con_conf[_brokerCount].client_id,
+							strlen((char*)(local_con_conf[_brokerCount].client_id)));
 
 	    //
 	    // Set will Params

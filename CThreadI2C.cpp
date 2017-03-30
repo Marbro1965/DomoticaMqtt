@@ -85,15 +85,17 @@ void CThreadI2C::Run()
 
         TMP006DrvGetTemp(&fCurrentTemp,&fAmbientTemp);
 
-
-
         //ReadAccSensor();
 
     	//osi_Sleep(100);
 
-        osi_messages var = TEMPERATURE_READ;
+        my_message var;
+
+        var.ultaskId = 0;//this;
+
+        var.ulmessage = TEMPERATURE_READ;
         //
-        // write message indicating publish message
+        // write message
         //
         osi_MsgQWrite(&CThread::g_PBQueue,&var,OSI_NO_WAIT);
 

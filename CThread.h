@@ -65,7 +65,7 @@ typedef struct
 
   unsigned long ulmessage;
 
-} message;
+} my_message;
 
 typedef struct
 {
@@ -82,7 +82,7 @@ typedef struct connection_config{
 	unsigned char *usr_pwd;
 	bool is_clean;
 	unsigned int keep_alive_time;
-	SlMqttClientCbs_t CallBAcks;
+	SlMqttClientCbs_t CallBacks;
 	int num_topics;
 	char *topic[TOPIC_COUNT];
 	unsigned char qos[TOPIC_COUNT];
@@ -147,6 +147,8 @@ protected:
 
 	static OsiMsgQ_t    g_MqttReceiveQueue;
 
+	void *taskPointer;
+
 public:
 
 	/*Message Queue for File Write*/
@@ -188,6 +190,8 @@ public:
 	static void LedTimerDeinitStop();
 
 	static void TimerPeriodicIntHandler();
+
+	static void CreateMessageQueue();
 };
 
 #endif /* DOMOTICAMQTT_CTHREAD_H_ */

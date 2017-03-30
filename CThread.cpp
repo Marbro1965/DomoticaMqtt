@@ -196,3 +196,9 @@ void CThread::TimerPeriodicIntHandler(void)
     }
 }
 
+void CThread::CreateMessageQueue()
+{
+
+	osi_MsgQCreate(&g_PBQueue,"PBQueue",sizeof(my_message),10);
+
+}
