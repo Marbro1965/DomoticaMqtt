@@ -50,9 +50,10 @@
 #endif
 #include "button_if.h"
 
-P_INT_HANDLER g_S2InterruptHdl;
-P_INT_HANDLER g_S3InterruptHdl;
+P_INT_PRIVATE_HANDLER g_S2InterruptHdl;
+P_INT_PRIVATE_HANDLER g_S3InterruptHdl;
 
+long g_pArg;
 //*****************************************************************************
 //
 //! GPIO Interrupt Handler for S3 button
@@ -70,7 +71,7 @@ void GPIOs3IntHandler()
     if(ulPinState & GPIO_PIN_5)
     {
         Button_IF_DisableInterrupt(SW3);
-        g_S3InterruptHdl();
+        g_S3InterruptHdl(g_pArg);
     }
 }
 //*****************************************************************************
@@ -88,7 +89,7 @@ void GPIOs2IntHandler()
     if(ulPinState & GPIO_PIN_6)
     {
         Button_IF_DisableInterrupt(SW2);
-        g_S2InterruptHdl();
+        g_S2InterruptHdl(g_pArg);
     }
 }
 
@@ -105,8 +106,11 @@ void GPIOs2IntHandler()
 //! \brief  Initializes Push Button Ports and Pins
 //
 //*****************************************************************************
-void Button_IF_Init(P_INT_HANDLER S2InterruptHdl,P_INT_HANDLER S3InterruptHdl )
+void Button_IF_Init(P_INT_PRIVATE_HANDLER S2InterruptHdl,P_INT_PRIVATE_HANDLER S3InterruptHdl, void* pArg)
 {
+
+	g_pArg = (long)pArg;
+
     if(S3InterruptHdl != NULL)
     {
         //

@@ -31,9 +31,8 @@ void CThreadIO::Run()
     //
     // Register Push Button Handlers
     //
-	taskPointer = this;
 
-    Button_IF_Init(CThreadIO::pushButtonInterruptHandler2,CThreadIO::pushButtonInterruptHandler3);
+    Button_IF_Init(CThreadIO::pushButtonInterruptHandler2,CThreadIO::pushButtonInterruptHandler3,(void*)this);
 
     for (;;)
     {
@@ -55,11 +54,11 @@ void CThreadIO::Run()
 //! return none
 //
 //****************************************************************************
-void CThreadIO::pushButtonInterruptHandler2()
+void CThreadIO::pushButtonInterruptHandler2(void* pArg)
 {
     my_message var;
 
-    var.ultaskId = 0;//taskPointer;
+    var.ultaskId = pArg;//taskPointer;
 
     var.ulmessage = PUSH_BUTTON_SW2_PRESSED;
     //
@@ -79,11 +78,11 @@ void CThreadIO::pushButtonInterruptHandler2()
 //! return none
 //
 //****************************************************************************
-void CThreadIO::pushButtonInterruptHandler3()
+void CThreadIO::pushButtonInterruptHandler3(void* pArg)
 {
     my_message var;
 
-    var.ultaskId = 0;//this;
+    var.ultaskId = pArg;//this;
 
     var.ulmessage = PUSH_BUTTON_SW3_PRESSED;
     //

@@ -29,9 +29,9 @@ public:
 	 *
 	 */
 
-	static void pushButtonInterruptHandler2();
+	static void pushButtonInterruptHandler2(void*);
 
-	static void pushButtonInterruptHandler3();
+	static void pushButtonInterruptHandler3(void*);
 
 };
 

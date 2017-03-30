@@ -60,9 +60,11 @@ typedef enum
 }eSwNum;
 typedef void (*P_INT_HANDLER)(void);
 
+typedef void (*P_INT_PRIVATE_HANDLER)(void*);
+
 void GPIOs2IntHandler();
 void GPIOs3IntHandler();
-void Button_IF_Init(P_INT_HANDLER S2InterruptHdl,P_INT_HANDLER S1InterruptHdl );
+void Button_IF_Init(P_INT_PRIVATE_HANDLER S2InterruptHdl,P_INT_PRIVATE_HANDLER S1InterruptHdl,void*);
 void Button_IF_EnableInterrupt(unsigned char ucSwitch);
 void Button_IF_DisableInterrupt(unsigned char ucSwitch);
 

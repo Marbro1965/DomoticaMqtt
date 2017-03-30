@@ -61,7 +61,7 @@ typedef struct
 
 typedef struct
 {
-  unsigned long ultaskId;
+  void* ultaskId;
 
   unsigned long ulmessage;
 
