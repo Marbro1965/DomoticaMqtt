@@ -149,6 +149,8 @@ protected:
 
 	void *taskPointer;
 
+	static volatile bool  g_sendMessageStatus;
+
 public:
 
 	/*Message Queue for File Write*/

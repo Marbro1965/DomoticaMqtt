@@ -21,6 +21,8 @@ public:
 
 	//
 	unsigned int ReadDeviceConfiguration();
+
+	void EmptyQueueMessage(void);
 };
 
 #endif /* CTHREADMAIN_H_ */

@@ -70,9 +70,14 @@ void CThreadMain::Run(){
     //Parse data read
     initDefinitionsThread();
 
-    //
+    //Creazione della coda dei messaggi
+    CThread::CreateMessageQueue();
+
+    //Impostazione struttura broker
+    CThreadMqttClient::InitUserConnectConfig();
+
+
     // Configure LED
-    //
 reconnection:
 
     GPIO_IF_LedConfigure(LED1);//|LED2|LED3); //GPIO_IF_LedConfigure(LED1|LED2|LED3);
@@ -134,20 +139,19 @@ role_as_accessPoint:
 
     }
 
-    //Impostazione struttura broker
-    CThreadMqttClient::InitUserConnectConfig();
 
-    //Libreria Mqtt (Thread????)
+    //Libreria Mqtt (Thread????) se c'e' stata una disconnessione meglio
+    //riinizializzare la libreria
     CThreadMqttClient::InitMqttClientLibrary();
-
-    //Creazione della coda dei messaggi
-    CThread::CreateMessageQueue();
 
     //creazione dei task MQTT
 
     //creazione task I2C
 
     //creazione task I/O
+
+    //svuota la coda dei messaggi in caso di riconnessione
+    g_sendMessageStatus = true;
 
     for(;;)
     {
@@ -157,6 +161,9 @@ role_as_accessPoint:
 				;
 			else
 			{
+				//deve interrompere l'invio dei messaggi da parte dei threads
+				g_sendMessageStatus = false;
+
 				//terminateThreads();
 				osi_Sleep(2000);
 
@@ -167,6 +174,23 @@ role_as_accessPoint:
 
     	osi_Sleep(5000);
     }
+
+
+}
+
+
+/*
+ *
+ *
+ */
+void CThreadMain::EmptyQueueMessage(void)
+{
+
+	//verificare alla partenza cosa succede quando la coda e' vuota
+
+	my_message RecvQue;
+
+	OsiReturnVal_e e = osi_MsgQRead( &g_PBQueue, &RecvQue, OSI_NO_WAIT);
 
 
 }

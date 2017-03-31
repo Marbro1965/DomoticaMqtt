@@ -22,9 +22,10 @@
 
 #include "gpio_if.h"
 
-
-
 #define UART_PRINT              Report
+
+/*Background receive task priority*/
+#define TASK_PRIORITY           3
 
 
 /*Publishing topics and messages*/
@@ -46,8 +47,7 @@ unsigned char *CThread::data_sw5= NULL;
 
 unsigned short CThread::g_usTimerInts = 0;
 
-/*Background receive task priority*/
-#define TASK_PRIORITY           3
+volatile bool CThread::g_sendMessageStatus = 0;
 
 connect_config CThread::usr_connect_config[2];
 

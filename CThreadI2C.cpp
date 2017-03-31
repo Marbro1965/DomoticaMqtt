@@ -77,17 +77,7 @@ void CThreadI2C::Run()
     for (;;)
     {
 
-    	//GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-
-    	osi_Sleep(1000);
-
-    	//GPIO_IF_LedOff(MCU_RED_LED_GPIO);
-
         TMP006DrvGetTemp(&fCurrentTemp,&fAmbientTemp);
-
-        //ReadAccSensor();
-
-    	//osi_Sleep(100);
 
         my_message var;
 
@@ -97,9 +87,10 @@ void CThreadI2C::Run()
         //
         // write message
         //
-        osi_MsgQWrite(&CThread::g_PBQueue,&var,OSI_NO_WAIT);
+        if (g_sendMessageStatus)
+        	osi_MsgQWrite(&CThread::g_PBQueue,&var,OSI_NO_WAIT);
 
-    	osi_Sleep(5000);
+    	osi_Sleep(1000);
 		
     }
 

@@ -15,7 +15,6 @@ CThreadIO::CThreadIO() {
 	/*
 	 * Create Message Queue
 	 */
-    //osi_MsgQCreate(&g_PBQueue,"PBQueue",sizeof(osi_messages),10);
 
 
 }
@@ -36,7 +35,6 @@ void CThreadIO::Run()
 
     for (;;)
     {
-
     	osi_Sleep(1000);
     }
 
@@ -58,13 +56,14 @@ void CThreadIO::pushButtonInterruptHandler2(void* pArg)
 {
     my_message var;
 
-    var.ultaskId = pArg;//taskPointer;
+    var.ultaskId = pArg;
 
     var.ulmessage = PUSH_BUTTON_SW2_PRESSED;
     //
     // write message indicating publish message
     //
-    osi_MsgQWrite(&g_PBQueue,&var,OSI_NO_WAIT);
+    if (g_sendMessageStatus)
+    	osi_MsgQWrite(&g_PBQueue,&var,OSI_NO_WAIT);
 }
 
 //****************************************************************************
@@ -82,12 +81,13 @@ void CThreadIO::pushButtonInterruptHandler3(void* pArg)
 {
     my_message var;
 
-    var.ultaskId = pArg;//this;
+    var.ultaskId = pArg;
 
     var.ulmessage = PUSH_BUTTON_SW3_PRESSED;
     //
     // write message indicating exit from sending loop
     //
-    osi_MsgQWrite(&g_PBQueue,&var,OSI_NO_WAIT);
+    if (g_sendMessageStatus)
+    	osi_MsgQWrite(&g_PBQueue,&var,OSI_NO_WAIT);
 
 }

@@ -635,7 +635,7 @@ void CThreadMqttClient::HandleMessages(void)
 {
 	connect_config *local_con_conf = (connect_config *)app_hndl;
 
-	osi_messages RecvQue;
+	my_message RecvQue;
 
     char data[64];
 
@@ -650,7 +650,7 @@ void CThreadMqttClient::HandleMessages(void)
 	    for (int iCount = 0; iCount<iNumBroker; iCount++)
 	    	{
 
-			if(PUSH_BUTTON_SW2_PRESSED == RecvQue)
+			if(PUSH_BUTTON_SW2_PRESSED == RecvQue.ulmessage)
 			   {
 			   Button_IF_EnableInterrupt(SW2);
 			   //
@@ -665,7 +665,7 @@ void CThreadMqttClient::HandleMessages(void)
 					UART_PRINT("Data: %s\n\r",data_sw2);
 			   	   }
 			   }
-			else if(PUSH_BUTTON_SW3_PRESSED == RecvQue)
+			else if(PUSH_BUTTON_SW3_PRESSED == RecvQue.ulmessage)
 				{
 				Button_IF_EnableInterrupt(SW3);
 				//
@@ -680,7 +680,7 @@ void CThreadMqttClient::HandleMessages(void)
 						UART_PRINT("Data: %s\n\r",data_sw3);
 					}
 				}
-			else if (TEMPERATURE_READ == RecvQue)
+			else if (TEMPERATURE_READ == RecvQue.ulmessage)
 				{
 //				if (bToggle)
 //				{
@@ -704,7 +704,7 @@ void CThreadMqttClient::HandleMessages(void)
 					UART_PRINT("Data: %s\n\r",data_sw4);
 					}
 				}
-			else if(BROKER_DISCONNECTION == RecvQue)
+			else if(BROKER_DISCONNECTION == RecvQue.ulmessage)
 				{
 
 				UART_PRINT("Disconnected: %s\n\r","");
