@@ -21,8 +21,9 @@ typedef enum events
     BROKER_DISCONNECTION,
 	SAVE_POST_DATA,
 	TEMPERATURE_READ,
-	MOVEMENT_DETECTED
-}osi_messages;
+	MOVEMENT_DETECTED,
+	MQTT_CLIENT_STARTED_THREAD_HANDLE_MESSAGE
+}enum_osi_messages;
 
 typedef struct
 {

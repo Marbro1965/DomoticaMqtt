@@ -89,7 +89,7 @@ CThreadHTTPServer::CThreadHTTPServer() {
 	
 	// TODO Auto-generated constructor stub
 
-	osi_MsgQCreate(&g_FileWriteQueue,"FileWriteQueue",sizeof(osi_messages),10);
+
 
 }
 
@@ -122,9 +122,9 @@ void CThreadHTTPServer::Run(){
     	osi_Sleep(10);
 
     	//handle message
-    	osi_messages RecvQue = NO_MESSAGE;
-	    osi_MsgQRead( &g_FileWriteQueue, &RecvQue, OSI_NO_WAIT);
-	    if(SAVE_POST_DATA == RecvQue)
+    	my_message RecvQue;
+	    osi_MsgQRead( &CThread::g_FileWriteQueue, &RecvQue, OSI_NO_WAIT);
+	    if(SAVE_POST_DATA == RecvQue.ulmessage)
 	    	{
 	    	CThreadDefinitions::outputFile();
 	    	}
@@ -365,7 +365,9 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
               {
 
             	  //create queue message
-            	  osi_messages var = SAVE_POST_DATA;
+            	  my_message var;
+
+            	  var.ulmessage= SAVE_POST_DATA;
             	  //
             	  // write message indicating publish message
             	  //
@@ -460,7 +462,9 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
                   {
 
                 	  //create queue message
-                	  osi_messages var = SAVE_POST_DATA;
+                	  my_message var;
+
+                	  var.ulmessage = SAVE_POST_DATA;
                 	  //
                 	  // write message indicating publish message
                 	  //
@@ -495,7 +499,9 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent,
               {
 
             	  //create queue message
-            	  osi_messages var = SAVE_POST_DATA;
+            	  my_message var;
+
+            	  var.ulmessage = SAVE_POST_DATA;
             	  //
             	  // write message indicating publish message
             	  //

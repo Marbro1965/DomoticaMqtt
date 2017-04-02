@@ -69,6 +69,11 @@ OsiMsgQ_t CThread::g_FileReadQueue = 0;
 
 OsiMsgQ_t CThread::g_I2CQueue = 0;
 
+OsiMsgQ_t CThread::g_MqttSendQueue = 0;
+
+OsiMsgQ_t CThread::g_MqttReceiveQueue = 0;
+
+
 configuration CThread::config;
 
 SlSecParams_t CThread::SecurityParams = {0};
@@ -200,5 +205,13 @@ void CThread::CreateMessageQueue()
 {
 
 	osi_MsgQCreate(&g_PBQueue,"PBQueue",sizeof(my_message),10);
+
+	osi_MsgQCreate(&g_MqttSendQueue,"MQTTSendQueue",sizeof(my_message),10);
+
+	osi_MsgQCreate(&g_MqttReceiveQueue,"MQTTReceiveQueue",sizeof(my_message),10);
+
+	osi_MsgQCreate(&g_FileWriteQueue,"FileWriteQueue",sizeof(my_message),10);
+
+
 
 }

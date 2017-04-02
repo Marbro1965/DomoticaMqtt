@@ -145,8 +145,9 @@ role_as_accessPoint:
     CThreadMqttClient::InitMqttClientLibrary();
 
     //creazione dei task MQTT
+    initMqttClient();
 
-    //creazione task I2C
+     //creazione task I2C
 
     //creazione task I/O
 
@@ -158,7 +159,10 @@ role_as_accessPoint:
     	if (ROLE_AP!=uMode)
     	{
 			if (IS_CONNECTED(g_ulStatus))
+			{
 				;
+
+			}
 			else
 			{
 				//deve interrompere l'invio dei messaggi da parte dei threads
@@ -172,7 +176,7 @@ role_as_accessPoint:
 
 		}
 
-    	osi_Sleep(5000);
+    	//osi_Sleep(5000);
     }
 
 
