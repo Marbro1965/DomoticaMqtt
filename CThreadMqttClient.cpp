@@ -229,10 +229,6 @@ CThreadMqttClient::~CThreadMqttClient() {
 
 void CThreadMqttClient::Run(){
 
-    long lRetVal = -1;
-
-    int iNumBroker = 0;
-
     int iConnBroker = 0;
 
 	connect_config *local_con_conf = (connect_config *)app_hndl;
@@ -287,8 +283,6 @@ void CThreadMqttClient::Run(){
 	//
 	// connecting to the broker
 	//
-
-	osi_Sleep(1000);
 
 	int iReconnect = 0;
 
@@ -365,10 +359,8 @@ void CThreadMqttClient::Run(){
 
 
 	//
-
-
 	//when everything ok send message that it starts handling messages
-
+	//
     my_message var;
     var.ulmessage = MQTT_CLIENT_STARTED_THREAD_HANDLE_MESSAGE;
     var.ultaskId = this;
@@ -382,14 +374,17 @@ void CThreadMqttClient::Run(){
 
 
 end:
+
+	var.ulmessage = MQTT_CLIENT_END;
+	var.ultaskId = this;
+	osi_MsgQWrite(&g_MqttSendQueue,&var,OSI_NO_WAIT);
+
+
 	sl_ExtLib_MqttClientExit();
 	UART_PRINT("\n\r Exiting the Application\n\r");
 
     OsiTaskHandle tHandle = NULL;
     osi_TaskDelete(&tHandle);
-
-
-
 
 }
 
@@ -639,7 +634,7 @@ void CThreadMqttClient::HandleMessages(void)
 
 	for(;;)
 	    {
-	    osi_MsgQRead( &g_PBQueue, &RecvQue, OSI_WAIT_FOREVER);
+	    osi_MsgQRead( &g_MqttReceiveQueue, &RecvQue, OSI_WAIT_FOREVER);
 
 	    for (int iCount = 0; iCount<iNumBroker; iCount++)
 	    	{

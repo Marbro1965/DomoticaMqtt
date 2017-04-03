@@ -147,12 +147,10 @@ role_as_accessPoint:
     //creazione dei task MQTT
     initMqttClient();
 
-     //creazione task I2C
+    //creazione task I2C
 
     //creazione task I/O
 
-    //svuota la coda dei messaggi in caso di riconnessione
-    g_sendMessageStatus = true;
 
     for(;;)
     {
@@ -160,7 +158,29 @@ role_as_accessPoint:
     	{
 			if (IS_CONNECTED(g_ulStatus))
 			{
-				;
+				//
+				//Read messages from MQTT client
+				//
+				my_message var;
+
+				osi_MsgQRead( &g_MqttSendQueue, &var, OSI_NO_WAIT);
+
+				switch (var.ulmessage)
+				{
+				case MQTT_CLIENT_STARTED_THREAD_HANDLE_MESSAGE:
+					//c'e' almeno un task MQTT in grado di gestire il messaggio
+				    g_sendMessageStatus = true;
+
+					break;
+				case MQTT_CLIENT_END:
+
+					break;
+
+				}
+
+				//
+				//Read other messages from queue (key pressed, broker disconnection
+				//
 
 			}
 			else
