@@ -203,25 +203,33 @@ role_as_accessPoint:
 					{
 						case PUSH_BUTTON_SW2_PRESSED:
 							Button_IF_EnableInterrupt(SW2);
-							//
-							// send publish message to mqtt clients threads
-							//
 							break;
-
 						case PUSH_BUTTON_SW3_PRESSED:
-
-							// send publish message to mqtt clients threads
-
 							Button_IF_EnableInterrupt(SW3);
-
 							break;
 						case TEMPERATURE_READ:
-
-							// send publish message to mqtt clients threads
-
 							break;
 
 					}
+
+					if (var.ulmessage != NO_MESSAGE)
+					{
+
+						if (usr_connect_config[0].is_connected)
+						{
+							var.ultaskId = usr_connect_config[0].callThread;
+							//
+							osi_MsgQWrite( &g_MqttReceiveQueue, &var, OSI_NO_WAIT);
+						}
+						if (usr_connect_config[1].is_connected)
+						{
+							var.ultaskId = usr_connect_config[1].callThread;
+							//
+							osi_MsgQWrite( &g_MqttReceiveQueue, &var, OSI_NO_WAIT);
+
+						}
+					}
+
 				}
 			}
 			else

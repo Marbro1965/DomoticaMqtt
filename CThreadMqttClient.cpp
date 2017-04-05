@@ -644,7 +644,19 @@ void CThreadMqttClient::HandleMessages(void)
 
 	for(;;)
 	    {
+_next:
 	    osi_MsgQRead( &g_MqttReceiveQueue, &RecvQue, OSI_WAIT_FOREVER);
+
+	    if (RecvQue.ultaskId == this)
+	    	//the message is for me
+	    	;
+	    else
+	    {
+	    	//the message is not for me, repost
+	    	osi_MsgQWrite( &g_MqttReceiveQueue, &RecvQue, OSI_NO_WAIT);
+
+	    	goto _next;
+	    }
 
 	    for (int iCount = 0; iCount<iNumBroker; iCount++)
 	    	{
