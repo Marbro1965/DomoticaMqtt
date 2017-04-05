@@ -233,8 +233,14 @@ void CThreadMqttClient::Run(){
 
 	connect_config *local_con_conf = (connect_config *)app_hndl;
 
+
+	//memorize the pointer to thread so to discriminate who is sending message and
+	//to whom send message from main thread.
+
+	local_con_conf[_brokerCount].callThread = this;
+
 	//
-	//create client context
+	//create client context unico
 	//
 	local_con_conf[_brokerCount].clt_ctx =  sl_ExtLib_MqttClientCtxCreate(&local_con_conf[_brokerCount].broker_config,
 									  &local_con_conf[_brokerCount].CallBacks,
@@ -323,8 +329,9 @@ void CThreadMqttClient::Run(){
 
 		goto end;
 		}
-		else
+	else
 		{
+		//the relevant thread is connected
 		UART_PRINT("\n\rSuccess: conn to Broker no. %d\n\r ", _brokerCount+1);
 		local_con_conf[_brokerCount].is_connected = true;
 
@@ -347,15 +354,15 @@ void CThreadMqttClient::Run(){
 
 			goto end;
 		}
-	        else
-	        {
+	else
+	    {
 
-	        	UART_PRINT("Client subscribed on following topics:\n\r");
-	        	for(int iSub = 0; iSub < local_con_conf[_brokerCount].num_topics; iSub++)
+	      	UART_PRINT("Client subscribed on following topics:\n\r");
+	       	for(int iSub = 0; iSub < local_con_conf[_brokerCount].num_topics; iSub++)
 	        	{
 	        		UART_PRINT("%s\n\r", local_con_conf[_brokerCount].topic[iSub]);
-	           }
-	        }
+	            }
+	    }
 
 
 	//
@@ -365,6 +372,8 @@ void CThreadMqttClient::Run(){
     var.ulmessage = MQTT_CLIENT_STARTED_THREAD_HANDLE_MESSAGE;
     var.ultaskId = this;
     osi_MsgQWrite(&g_MqttSendQueue,&var,OSI_NO_WAIT);
+
+    //Ciclo dei messaggi ricevuti da CThreadMain e da inviare su rete
 
 	HandleMessages();
 	//
@@ -528,17 +537,18 @@ void CThreadMqttClient::sl_MqttDisconnect(void *app_hndl)
     var.ultaskId = local_con_conf->callThread;
 
 
-    sl_ExtLib_MqttClientUnsub(local_con_conf->clt_ctx, local_con_conf->topic,
-                              TOPIC_COUNT);
-    UART_PRINT("disconnect from broker %s\r\n",
-           (local_con_conf->broker_config).server_info.server_addr);
+    sl_ExtLib_MqttClientUnsub(local_con_conf->clt_ctx, local_con_conf->topic,TOPIC_COUNT);
+
+    UART_PRINT("disconnect from broker %s\r\n",(local_con_conf->broker_config).server_info.server_addr);
+
     local_con_conf->is_connected = false;
+
     sl_ExtLib_MqttClientCtxDelete(local_con_conf->clt_ctx);
 
     //
     // write message indicating publish message
     //
-    osi_MsgQWrite(&g_PBQueue,&var,OSI_NO_WAIT);
+    osi_MsgQWrite(&g_MqttSendQueue,&var,OSI_NO_WAIT);
 
 }
 
@@ -702,8 +712,14 @@ void CThreadMqttClient::HandleMessages(void)
 
 				//se non ci sono configurazioni esce
 
-				GPIO_IF_LedOn(MCU_RED_LED_GPIO);
+				break;
 				}
+			else if (FORCE_BROKER_DISCONNECTION==RecvQue.ulmessage)
+				{
+
+				break;
+				}
+
 	    	}
 	    }
 

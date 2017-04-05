@@ -11,7 +11,7 @@
 // common interface includes
 #include "network_if.h"
 #include "gpio_if.h"
-
+#include "button_if.h"
 #include "spawner.h"
 
 #include "definitions.h"
@@ -163,6 +163,8 @@ role_as_accessPoint:
 				//
 				my_message var;
 
+				var.ulmessage = NO_MESSAGE;
+
 				osi_MsgQRead( &g_MqttSendQueue, &var, OSI_NO_WAIT);
 
 				switch (var.ulmessage)
@@ -173,19 +175,60 @@ role_as_accessPoint:
 
 					break;
 				case MQTT_CLIENT_END:
+					//segnala il thread disconnesso
+					g_sendMessageStatus = false;
+					break;
+
+				case BROKER_DISCONNECTION:
+
+					//reindirizza il messaggio
+
+					//flagga il thread come non in grado di ricevere messaggi
+					osi_MsgQWrite(&g_MqttReceiveQueue,&var,OSI_NO_WAIT);
 
 					break;
 
+
 				}
-
 				//
-				//Read other messages from queue (key pressed, broker disconnection
+				//Read other messages from queue (key pressed, broker disconnection etc
 				//
+				if (g_sendMessageStatus)
+				{
+					var.ulmessage = NO_MESSAGE;
 
+					osi_MsgQRead( &g_PBQueue, &var, OSI_NO_WAIT);
+
+					switch (var.ulmessage)
+					{
+						case PUSH_BUTTON_SW2_PRESSED:
+							Button_IF_EnableInterrupt(SW2);
+							//
+							// send publish message to mqtt clients threads
+							//
+							break;
+
+						case PUSH_BUTTON_SW3_PRESSED:
+
+							// send publish message to mqtt clients threads
+
+							Button_IF_EnableInterrupt(SW3);
+
+							break;
+						case TEMPERATURE_READ:
+
+							// send publish message to mqtt clients threads
+
+							break;
+
+					}
+				}
 			}
 			else
 			{
+				//
 				//deve interrompere l'invio dei messaggi da parte dei threads
+				//
 				g_sendMessageStatus = false;
 
 				//terminateThreads();
