@@ -64,7 +64,7 @@ typedef struct
 
 typedef struct
 {
-  void* ultaskId;
+  int			ultaskId;
 
   unsigned long ulmessage;
 
@@ -78,11 +78,11 @@ typedef struct
 
 typedef struct connection_config{
 	SlMqttClientCtxCfg_t broker_config;
-	void *clt_ctx;
-	void *callThread;
-	unsigned char *client_id;
-	unsigned char *usr_name;
-	unsigned char *usr_pwd;
+	void 				*clt_ctx;
+	int					callThread;
+	unsigned char 		*client_id;
+	unsigned char 		*usr_name;
+	unsigned char 		*usr_pwd;
 	bool is_clean;
 	unsigned int keep_alive_time;
 	SlMqttClientCbs_t CallBacks;

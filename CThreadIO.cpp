@@ -56,7 +56,7 @@ void CThreadIO::pushButtonInterruptHandler2(void* pArg)
 {
     my_message var;
 
-    var.ultaskId = pArg;
+    var.ultaskId = (int)pArg;
 
     var.ulmessage = PUSH_BUTTON_SW2_PRESSED;
     //
@@ -81,7 +81,7 @@ void CThreadIO::pushButtonInterruptHandler3(void* pArg)
 {
     my_message var;
 
-    var.ultaskId = pArg;
+    var.ultaskId = (int)pArg;
 
     var.ulmessage = PUSH_BUTTON_SW3_PRESSED;
     //

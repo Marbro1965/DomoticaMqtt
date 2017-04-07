@@ -237,7 +237,7 @@ void CThreadMqttClient::Run(){
 	//memorize the pointer to thread so to discriminate who is sending message and
 	//to whom send message from main thread.
 
-	local_con_conf[_brokerCount].callThread = this;
+	local_con_conf[_brokerCount].callThread = _brokerCount;
 
 	//
 	//create client context unico
@@ -370,7 +370,7 @@ void CThreadMqttClient::Run(){
 	//
     my_message var;
     var.ulmessage = MQTT_CLIENT_STARTED_THREAD_HANDLE_MESSAGE;
-    var.ultaskId = this;
+    var.ultaskId = _brokerCount;
     osi_MsgQWrite(&g_MqttSendQueue,&var,OSI_NO_WAIT);
 
     //Ciclo dei messaggi ricevuti da CThreadMain e da inviare su rete
@@ -385,7 +385,7 @@ void CThreadMqttClient::Run(){
 end:
 
 	var.ulmessage = MQTT_CLIENT_END;
-	var.ultaskId = this;
+	var.ultaskId = _brokerCount;
 	osi_MsgQWrite(&g_MqttSendQueue,&var,OSI_NO_WAIT);
 
 
@@ -647,7 +647,7 @@ void CThreadMqttClient::HandleMessages(void)
 _next:
 	    osi_MsgQRead( &g_MqttReceiveQueue, &RecvQue, OSI_WAIT_FOREVER);
 
-	    if (RecvQue.ultaskId == this)
+	    if (RecvQue.ultaskId == _brokerCount)
 	    	//the message is for me
 	    	;
 	    else

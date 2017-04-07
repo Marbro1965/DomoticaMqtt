@@ -217,13 +217,13 @@ role_as_accessPoint:
 
 						if (usr_connect_config[0].is_connected)
 						{
-							var.ultaskId = usr_connect_config[0].callThread;
+							var.ultaskId = usr_connect_config[0].callThread;			//0
 							//
 							osi_MsgQWrite( &g_MqttReceiveQueue, &var, OSI_NO_WAIT);
 						}
 						if (usr_connect_config[1].is_connected)
 						{
-							var.ultaskId = usr_connect_config[1].callThread;
+							var.ultaskId = usr_connect_config[1].callThread;			//1
 							//
 							osi_MsgQWrite( &g_MqttReceiveQueue, &var, OSI_NO_WAIT);
 
