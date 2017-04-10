@@ -109,7 +109,7 @@ reconnection:
     lRetVal = Network_IF_ConnectAP(GetSSIDName(), SecurityParams);
     if(lRetVal < 0)
     {
-       //LOOP_FOREVER();
+       //
     	CThread::LedTimerDeinitStop();
     	GPIO_IF_LedOff(MCU_RED_LED_GPIO);
     	osi_Sleep(4000);
@@ -117,7 +117,7 @@ reconnection:
     }
 role_as_accessPoint:
     //
-    // Disable the LED blinking Timer as Device is connected to AP
+    // Disable the LED blinking Timer because device is connected to AP
     //
 	CThread::LedTimerDeinitStop();
     //
@@ -136,7 +136,12 @@ role_as_accessPoint:
     }
     else
     {
+    	//gestione comportamento come access Point
 
+    	//inizializza il thread server
+
+    	for (;;)
+    		;
     }
 
 
