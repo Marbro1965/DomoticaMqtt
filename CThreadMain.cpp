@@ -11,7 +11,7 @@
 // common interface includes
 #include "network_if.h"
 #include "gpio_if.h"
-
+#include "button_if.h"
 #include "spawner.h"
 
 #include "definitions.h"
@@ -109,7 +109,7 @@ reconnection:
     lRetVal = Network_IF_ConnectAP(GetSSIDName(), SecurityParams);
     if(lRetVal < 0)
     {
-       //LOOP_FOREVER();
+       //
     	CThread::LedTimerDeinitStop();
     	GPIO_IF_LedOff(MCU_RED_LED_GPIO);
     	osi_Sleep(4000);
@@ -117,7 +117,7 @@ reconnection:
     }
 role_as_accessPoint:
     //
-    // Disable the LED blinking Timer as Device is connected to AP
+    // Disable the LED blinking Timer because device is connected to AP
     //
 	CThread::LedTimerDeinitStop();
     //
@@ -136,7 +136,12 @@ role_as_accessPoint:
     }
     else
     {
+    	//gestione comportamento come access Point
 
+    	//inizializza il thread server
+
+    	for (;;)
+    		;
     }
 
 
@@ -147,12 +152,10 @@ role_as_accessPoint:
     //creazione dei task MQTT
     initMqttClient();
 
-     //creazione task I2C
+    //creazione task I2C
 
     //creazione task I/O
 
-    //svuota la coda dei messaggi in caso di riconnessione
-    g_sendMessageStatus = true;
 
     for(;;)
     {
@@ -160,12 +163,85 @@ role_as_accessPoint:
     	{
 			if (IS_CONNECTED(g_ulStatus))
 			{
-				;
+				//
+				//Read messages from MQTT client
+				//
+				my_message var;
 
+				var.ulmessage = NO_MESSAGE;
+
+				osi_MsgQRead( &g_MqttSendQueue, &var, OSI_NO_WAIT);
+
+				switch (var.ulmessage)
+				{
+				case MQTT_CLIENT_STARTED_THREAD_HANDLE_MESSAGE:
+					//c'e' almeno un task MQTT in grado di gestire il messaggio
+				    g_sendMessageStatus = true;
+
+					break;
+				case MQTT_CLIENT_END:
+					//segnala il thread disconnesso
+					g_sendMessageStatus = false;
+					break;
+
+				case BROKER_DISCONNECTION:
+
+					//reindirizza il messaggio
+
+					//flagga il thread come non in grado di ricevere messaggi
+					osi_MsgQWrite(&g_MqttReceiveQueue,&var,OSI_NO_WAIT);
+
+					break;
+
+
+				}
+				//
+				//Read other messages from queue (key pressed, broker disconnection etc
+				//
+				if (g_sendMessageStatus)
+				{
+					var.ulmessage = NO_MESSAGE;
+
+					osi_MsgQRead( &g_PBQueue, &var, OSI_NO_WAIT);
+
+					switch (var.ulmessage)
+					{
+						case PUSH_BUTTON_SW2_PRESSED:
+							Button_IF_EnableInterrupt(SW2);
+							break;
+						case PUSH_BUTTON_SW3_PRESSED:
+							Button_IF_EnableInterrupt(SW3);
+							break;
+						case TEMPERATURE_READ:
+							break;
+
+					}
+
+					if (var.ulmessage != NO_MESSAGE)
+					{
+
+						if (usr_connect_config[0].is_connected)
+						{
+							var.ultaskId = usr_connect_config[0].callThread;			//0
+							//
+							osi_MsgQWrite( &g_MqttReceiveQueue, &var, OSI_NO_WAIT);
+						}
+						if (usr_connect_config[1].is_connected)
+						{
+							var.ultaskId = usr_connect_config[1].callThread;			//1
+							//
+							osi_MsgQWrite( &g_MqttReceiveQueue, &var, OSI_NO_WAIT);
+
+						}
+					}
+
+				}
 			}
 			else
 			{
+				//
 				//deve interrompere l'invio dei messaggi da parte dei threads
+				//
 				g_sendMessageStatus = false;
 
 				//terminateThreads();
